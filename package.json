@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 {
   "name": "dumbelling",
   "private": true,
@@ -10,16 +9,3 @@
     ]
   }
 }
-=======
-{
-  "name": "dumbelling",
-  "private": true,
-  "packageManager": "yarn@4.6.0",
-  "workspaces": {
-    "packages": [
-      "apps/*",
-      "packages/*"
-    ]
-  }
-}
->>>>>>> 0638e42 (Fix: Add ignored files)
