@@ -69,8 +69,7 @@ export const LoginScreen: React.FC = () => {
             <Text style={styles.kakaoText}>카카오 로그인</Text>
           </TouchableOpacity>
         </View>
- 
-   
+        
   );
 };
 
