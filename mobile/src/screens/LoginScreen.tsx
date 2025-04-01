@@ -5,23 +5,36 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
-  Platform,
   ActivityIndicator,
 } from 'react-native';
+
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/StackNavigator';
+import * as WebBrowser from 'expo-web-browser';
+
+type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'LoginScreen'>;
+
 
 export const LoginScreen: React.FC = () => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
 
+  const navigation = useNavigation<LoginScreenNavigationProp>();
+
+  const KAKAO_AUTH_URL =
+    'https://kauth.kakao.com/oauth/authorize' +
+    '?client_id=YOUR_REST_API_KEY' +
+    '&redirect_uri=https://example.com/oauth' +
+    '&response_type=code';
+
+  const handleKakaoLogin = async () => {
+    await WebBrowser.openBrowserAsync(KAKAO_AUTH_URL);
+  };
+
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+  
+
         <View style={styles.container}>
           <View>
             <Text style={styles.logo}>
@@ -29,13 +42,6 @@ export const LoginScreen: React.FC = () => {
             </Text>
             <Text style={styles.tagline}>기다리는 즐거움</Text>
           </View>
-
-          <ActivityIndicator
-            style={{ paddingTop: 100 }}
-            size="large"
-            color="blue"
-            animating={true}
-          />
 
           <TextInput
             placeholder="전화번호"
@@ -55,16 +61,16 @@ export const LoginScreen: React.FC = () => {
             <Text style={styles.loginText}>로그인</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.signupButton}>
+          <TouchableOpacity onPress={() => navigation.navigate('SignupScreen')} style={styles.signupButton}>
             <Text style={styles.signupText}>회원가입</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.kakaoButton}>
+          <TouchableOpacity style={styles.kakaoButton} onPress={handleKakaoLogin} >
             <Text style={styles.kakaoText}>카카오 로그인</Text>
           </TouchableOpacity>
         </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+ 
+   
   );
 };
 
