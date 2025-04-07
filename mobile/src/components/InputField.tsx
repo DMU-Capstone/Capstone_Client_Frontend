@@ -7,7 +7,7 @@ interface InputFieldProps {
   value: string;
   onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
-  keyboardType?: 'default' | 'numeric' | 'email-address' | 'phone-pad';
+  keyboardType?: 'default' | 'phone-pad';
 }
 
 const InputField: React.FC<InputFieldProps> = ({
