@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
+import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/StackNavigator';
@@ -32,44 +33,75 @@ export const LoginScreen: React.FC = () => {
     await WebBrowser.openBrowserAsync(KAKAO_AUTH_URL);
   };
 
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post(
+        'http://134.185.99.89:8080/login',
+        {
+          phone_number: phone,
+          password: password,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Client-Type': 'mobile',
+          },
+        }
+      );
+
+      console.log('로그인 성공:', response.data);
+
+      // 토큰 저장하거나 다음 화면으로 이동
+      // 예: navigation.navigate('HomeScreen');
+    } catch (error: any) {
+      if (error.response) {
+        console.log('로그인 실패:', error.response.data);
+        alert('로그인 실패: ' + error.response.status);
+      } else {
+        console.error('에러:', error.message);
+      }
+    }
+  };
+
+
   return (
-  
 
-        <View style={styles.container}>
-          <View>
-            <Text style={styles.logo}>
-              <Text style={{ fontWeight: 'bold' }}>Wait:</Text>It
-            </Text>
-            <Text style={styles.tagline}>기다리는 즐거움</Text>
-          </View>
+    <View style={styles.container}>
+      <View>
+        <Text style={styles.logo}>
+          <Text style={{ fontWeight: 'bold' }}>Wait:</Text>It
+        </Text>
+        <Text style={styles.tagline}>기다리는 즐거움</Text>
+      </View>
 
-          <TextInput
-            placeholder="전화번호"
-            value={phone}
-            onChangeText={setPhone}
-            style={styles.input}
-          />
-          <TextInput
-            placeholder="비밀번호"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-            style={styles.input}
-          />
+      <TextInput
+        placeholder="전화번호"
+        value={phone}
+        onChangeText={setPhone}
+        style={styles.input}
+      />
 
-          <TouchableOpacity style={styles.loginButton}>
-            <Text style={styles.loginText}>로그인</Text>
-          </TouchableOpacity>
+      <TextInput
+        placeholder="비밀번호"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        style={styles.input}
+      />
 
-          <TouchableOpacity onPress={() => navigation.navigate('SignupScreen')} style={styles.signupButton}>
-            <Text style={styles.signupText}>회원가입</Text>
-          </TouchableOpacity>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.loginText}>로그인</Text>
+      </TouchableOpacity>
 
-          <TouchableOpacity style={styles.kakaoButton} onPress={handleKakaoLogin} >
-            <Text style={styles.kakaoText}>카카오 로그인</Text>
-          </TouchableOpacity>
-        </View>
-        
+      <TouchableOpacity onPress={() => navigation.navigate('SignupScreen')} style={styles.signupButton}>
+        <Text style={styles.signupText}>회원가입</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.kakaoButton} onPress={handleKakaoLogin} >
+        <Text style={styles.kakaoText}>카카오 로그인</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
