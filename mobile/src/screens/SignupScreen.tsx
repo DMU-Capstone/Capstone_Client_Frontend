@@ -4,6 +4,8 @@ import InputField from '../components/InputField';
 import axios from 'axios';
 import { Alert } from 'react-native';
 
+import { handleSignup } from '@shared/api/auth/Signup';
+
 
 
 
@@ -51,7 +53,7 @@ export const SignupScreen: React.FC = () => {
   
       console.log('응답 상태 코드:', response.status);
       
-      if (response.status === 200) {
+      if (response.status === 201) {
         const {name} = response.data;
         console.log("응답 상태 코드:", response.status);
         Alert.alert('회원가입 성공', `${name}님`);

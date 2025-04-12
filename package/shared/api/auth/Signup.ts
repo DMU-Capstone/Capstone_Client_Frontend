@@ -29,7 +29,7 @@ export const handleSignup = async ({
   gender,
 }: SignupParams) => {
   try {
-    const response = await axios.post('http://134.185.99.89:8080/join', {
+    const response = await axios.post('https://134.185.99.89:8080/join', {
       name,
       nickName,
       password,
