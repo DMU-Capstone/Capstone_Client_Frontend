@@ -3,13 +3,16 @@ import { View, StyleSheet, Button, Text, TouchableOpacity } from 'react-native';
 import InputField from '../components/InputField';
 import axios from 'axios';
 import { Alert } from 'react-native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../types/navigation';
 
 import { handleSignup } from '@shared/api/auth/Signup';
 
+type SignupScreenProps = {
+  navigation: NativeStackNavigationProp<RootStackParamList, 'Signup'>;
+};
 
-
-
-export const SignupScreen: React.FC = () => {
+export const SignupScreen: React.FC<SignupScreenProps> = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -17,8 +20,6 @@ export const SignupScreen: React.FC = () => {
   const [gender, setGender] = useState('');
   const [authRequested, setAuthRequested] = useState(false);
   const [authCode, setAuthCode] = useState('');
-
-
 
   const handleSendAuthCode = () => {
     // 서버 요청 로직 추가 필요
@@ -30,7 +31,6 @@ export const SignupScreen: React.FC = () => {
     setGender(value);
   };
 
-
   const formatPhoneNumber = (value: string) => {
     const onlyNums = value.replace(/\D/g, ''); // 숫자만 추출
     if (onlyNums.length < 4) return onlyNums;
@@ -38,8 +38,6 @@ export const SignupScreen: React.FC = () => {
       return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3)}`;
     return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}-${onlyNums.slice(7, 11)}`;
   };
-
-
 
   const handleSignup = async () => {
     try {
@@ -56,9 +54,7 @@ export const SignupScreen: React.FC = () => {
       if (response.status === 201) {
         const {name} = response.data;
         console.log("응답 상태 코드:", response.status);
-        Alert.alert('회원가입 성공', `${name}님`);
-        // 여기서 원하면 로그인 페이지로 이동 가능
-  
+        navigation.replace('Login')
       }
     } catch (error: any) {
       if (error.response) {
@@ -75,7 +71,6 @@ export const SignupScreen: React.FC = () => {
       }
     }
   };
-
 
   return (
     <View style={styles.container}>
@@ -96,7 +91,6 @@ export const SignupScreen: React.FC = () => {
           <Text style={styles.authButtonText}>인증번호 발급</Text>
         </TouchableOpacity>
       </View>
-
 
       {authRequested && (
         <InputField

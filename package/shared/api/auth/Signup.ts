@@ -39,7 +39,7 @@ export const handleSignup = async ({
 
     console.log('응답 상태 코드:', response.status);
 
-    if (response.status >= 200 && response.status < 300) {
+    if (response.status === 200 || response.status === 201) {
       const { name } = response.data;
       showAlert('회원가입 성공', `${name}님`);
     } else {
