@@ -14,10 +14,12 @@ const QueueList = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchDate, setSearchDate] = useState('');
     const [queue, setQueue] = useState<any[]>([]);  //queue 배열
+    const [filteredQueue, setFilteredQueue] = useState<any[]>([]);
 
     const fetchQueue = async() => {
         const res = await getAllQueue();
         setQueue(res.data);
+        setFilteredQueue(res.data);
     }
 
     //사이드바
@@ -41,6 +43,17 @@ const QueueList = () => {
         setSelectedIds((prev) =>
         prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
         );
+    };
+    const handleSearch = () => {
+        if (searchTerm.trim() === '') {
+            setFilteredQueue(queue);
+        } else {
+            const filtered = queue.filter((item) => 
+                item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.code?.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setFilteredQueue(filtered);
+        }
     };
 
     useEffect(() => {
@@ -80,9 +93,7 @@ const QueueList = () => {
             <Button
                 variant="contained"
                 size="medium"
-                onClick={() => {
-                    // 검색 실행
-                }}>검색
+                onClick={handleSearch}>검색
             </Button>
         </Box>
 
@@ -108,18 +119,18 @@ const QueueList = () => {
                 </TableHead>
 
                 <TableBody>
-                    {dummyMembers.map((member) => (
-                        <TableRow key={member.id} selected={selectedIds.includes(member.id)}>
+                    {queue.map((item) => (
+                        <TableRow key={item.id} selected={selectedIds.includes(item.id)}>
                             <TableCell padding="checkbox">
                                 <Checkbox
-                                    checked={selectedIds.includes(member.id)}
-                                    onChange={()=>handleToggleOne(member.id)}
+                                    checked={selectedIds.includes(item.id)}
+                                    onChange={()=>handleToggleOne(item.id)}
                                 />
                             </TableCell>
-                            <TableCell>{member.name}</TableCell>
-                            <TableCell>0 명</TableCell>
-                            <TableCell>{member.id}</TableCell>
-                            <TableCell>{member.create_date}</TableCell>
+                            <TableCell>{item.title}</TableCell>
+                            <TableCell>{item.waitingCount} 명</TableCell>
+                            <TableCell>{item.queueCode}</TableCell>
+                            <TableCell>{item.createDate || "-"}</TableCell>
                             <TableCell>
                                 <Button variant="contained" size="small" color="primary">삭제</Button>
                             </TableCell>
