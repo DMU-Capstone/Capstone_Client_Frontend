@@ -7,16 +7,16 @@ import App from './App.tsx'
 import MemberListScreen from './screens/Admin/MemberList.tsx'
 import QueueList from './screens/Admin/QueueList.tsx'
 import AdminMain from './screens/Admin/AdminMain.tsx'
+import LoginPage from './config/adminLogin.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<AdminMain />}>
-          <Route index element={<MemberListScreen />} />
-          <Route path="/queue" element={<QueueList />} />
-        </Route>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/" element={<AdminMain />}></Route>
       </Routes>
     </BrowserRouter>
   </StrictMode>,
 )
+//

@@ -1,18 +1,10 @@
-import api from '../config/api'
-import axios from 'axios';
-
-const BASE_URL = "http://134.185.99.89:8080";
-const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJjYXRlZ29yeSI6ImFjY2VzcyIsInVzZXJuYW1lIjoiMDEwLTEyMzQtMTIzNCIsInJvbGUiOiJST0xFX0FETUlOIiwiaWF0IjoxNzQ0NDg3NjI3LCJleHAiOjE3NDQ0ODgyMjd9.Nnn4U56-xLtvfvwBM4gmhNulnk73LppeKk8VI55oSIw";
+import api from '../config/api';
 
 
 export const getAllMembers = async (page = 1, size = 10) => {
     try {
-        const res = await axios.get(`${BASE_URL}/admin/users`, {
+        const res = await api.get("/admin/users", {
             params: { page, size },
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `access: ${accessToken}`,
-            },
         });
         return res.data;
     } catch (err) {
@@ -20,5 +12,17 @@ export const getAllMembers = async (page = 1, size = 10) => {
         throw err;
     }
 };
-export const getMemberById = (id:string) => api.get(`/manager/users/${id}`);    //아이디로 조회
+export const getMemberById = async (id: string) => {
+    try {
+        const res = await api.get(`/admin/users/${id}`);
+        return res.data;
+    } catch (err) {
+        throw err;
+    }
+}
 
+export const updateMember = (id: number, data: any) =>
+    api.patch(`/admin/users`, data);
+
+export const deleteMember = (id: number, data: any) =>
+    api.delete(`/admin/users/${id}`, { data })
