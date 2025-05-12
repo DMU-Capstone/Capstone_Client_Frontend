@@ -111,7 +111,6 @@ const MemberListScreen = () => {
 
     return (
     <div>
-
         <div className="contentArea"
             style={{
                 transition: "margin 0.4s ease",
