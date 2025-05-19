@@ -22,8 +22,6 @@ interface Queue {
 
 const QueueList = () => {
     const navigate = useNavigate();
-
-    
     const [searchTerm, setSearchTerm] = useState("");
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedQueue, setSelectedQueue] = useState<Queue | null>(null);
@@ -37,6 +35,17 @@ const QueueList = () => {
             setFilteredQueue(data.content);
         } catch {
             alert("대기열 불러오기 실패");
+        }
+    };
+    const handleSearch = () => {
+        if (searchTerm.trim() === '') {
+            setFilteredQueue(queue);
+        } else {
+            const filtered = queue.filter((item) => 
+                item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.code?.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setFilteredQueue(filtered);
         }
     };
 

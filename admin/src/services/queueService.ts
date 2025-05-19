@@ -11,4 +11,3 @@ export const updateQueue = (id: number, data: any) =>
 
 export const deleteQueue = (id: number) =>
     api.delete(`/admin/hosts/${id}`);
-
