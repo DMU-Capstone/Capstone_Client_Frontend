@@ -1,7 +1,13 @@
 import api from '../config/api'
 
-export const getAllQueue = () => api.get('/manager/queue'); //전체 조회
-export const getQueueById = (id:string) => api.get(`/manager/queue/${id}`);    //대기열 생성 시 발급되는 코드로 조회
+export const getAllQueues = async (page = 1, size = 10) => {
+    return api.get('/admin/hosts', {
+        params: { page, size },
+    });
+};
 
+export const updateQueue = (id: number, data: any) => 
+    api.patch(`/admin/hosts`, data);
 
-//더미
+export const deleteQueue = (id: number) =>
+    api.delete(`/admin/hosts/${id}`);
