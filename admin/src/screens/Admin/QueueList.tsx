@@ -37,7 +37,7 @@ const QueueList = () => {
             alert("대기열 불러오기 실패");
         }
     };
-    const handleSearch = () => {
+    /*const handleSearch = () => {
         if (searchTerm.trim() === '') {
             setFilteredQueue(queue);
         } else {
@@ -47,7 +47,7 @@ const QueueList = () => {
             );
             setFilteredQueue(filtered);
         }
-    };
+    };*/
 
     useEffect(() => {
         fetchQueue();
@@ -151,7 +151,6 @@ const QueueList = () => {
                         <TableCell>매니저</TableCell>
                         <TableCell>시작</TableCell>
                         <TableCell>종료</TableCell>
-                        <TableCell>관리</TableCell>
                     </TableRow>
                 </TableHead>
 
@@ -169,12 +168,6 @@ const QueueList = () => {
                             <TableCell>{q.hostManagerName}</TableCell>
                             <TableCell>{q.startTime}</TableCell>
                             <TableCell>{q.eddTime}</TableCell>
-                            <TableCell>
-                                <Button onClick={() => {
-                                    setSelectedQueue(q);
-                                    setModalOpen(true);
-                                }} variant="contained" size="small" color="primary">수정</Button>
-                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
