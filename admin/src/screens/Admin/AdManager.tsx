@@ -1,16 +1,51 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Modal, Box, Typography } from "@mui/material"
 import "../../styles/modalStyle.css"
+import { getAllAds, uploadAdImage, setMainBanner } from "../../services/AdService";
 
-const dummyAds = [
-    { id: 1, title: "광고 A", image: "/images/ad1.png", createdAt: "2024-05-01" },
-    { id: 2, title: "광고 B", image: "/imgaes/ad2.png", createdAt: "2024-06-15" }
-];
+interface Ad {
+    id: number;
+    dbFilePath: string;
+    createdAt: string;
+}
 
 const AdManager = () => {
-    const [ads, setAds] = useState(dummyAds);
-    const [selectedAd, setSelectedAd] = useState<any>(null);
+    const [ads, setAds] = useState<Ad[]>([]);
+    const [selectedAd, setSelectedAd] = useState<Ad | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
+
+    const fetchAds = async() => {
+        try {
+            const res = await getAllAds();
+            console.log(res.data);
+            setAds(res.data.content);
+        } catch {
+            alert("광고 목록을 불러오지 못했습니다.")
+        }
+    };
+
+    const handleImageChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || selectedAd) return;
+
+        try {
+            await uploadAdImage(file);
+            alert("이미지 업로드 완료");
+            setModalOpen(false);
+            fetchAds();
+        } catch {
+            alert("이미지 업로드 실패");
+        }
+    };
+
+    const handleSetBanner = async (imgId: number, number: number) => {
+        try {
+            await setMainBanner(imgId, number);
+            alert(`메인 배너(${number})로 설정 완료`);
+        } catch {
+            alert("메인 배너 설정 실패");
+        }
+    };
 
     const handleOpen = (ad: any) => {
         setSelectedAd(ad);
@@ -18,9 +53,13 @@ const AdManager = () => {
     };
 
     const handleClose = () => {
-        setModalOpen(false);
         setSelectedAd(null);
+        setModalOpen(false);
     };
+
+    useEffect(() => {
+        fetchAds();
+    }, []);
 
     return (
         <>
@@ -31,25 +70,31 @@ const AdManager = () => {
                     <TableHead>
                         <TableRow>
                             <TableCell>번호</TableCell>
-                            <TableCell>제목</TableCell>
                             <TableCell>이미지</TableCell>
                             <TableCell>등록일</TableCell>
                             <TableCell>관리</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {ads.map((ad) => (
+                        {ads.map((ad, index) => (
                         <TableRow key={ad.id}>
-                            <TableCell>{ad.id}</TableCell>
-                            <TableCell>{ad.title}</TableCell>
+                            <TableCell>{index + 1}</TableCell>
                             <TableCell>
-                                <img src={ad.image} alt="ad" style={{ width: "100px" }} />
+                                <img src = {ad.dbFilePath} alt = "ad" style = {{ width: "100px" }} />
                             </TableCell>
-                            <TableCell>{ad.createdAt}</TableCell>
+                            <TableCell>
+                                {new Date(ad.createdAt).toLocaleDateString()}
+                            </TableCell>
                             <TableCell>
                                 <Button variant="contained" onClick={() => handleOpen(ad)}>
                                     수정
                                 </Button>
+                                <Button
+                                    variant="outlined"
+                                    color="secondary"
+                                    sx={{ml:1}}
+                                    onClick={() => handleSetBanner(ad.id, 0)}
+                                >메인으로 설정</Button>
                             </TableCell>
                         </TableRow>
                         ))}
@@ -60,18 +105,9 @@ const AdManager = () => {
             <Modal open={modalOpen} onClose={handleClose}>
                 <Box className="modalBox">
                     <Typography variant="h6" gutterBottom>광고 수정</Typography>
-                    <Typography>{selectedAd?.title}</Typography>
+                    <Typography>이미지를 업로드</Typography>
 
-                    <input type="file" accept="image/*" onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                            const imageUrl = URL.createObjectURL(file);
-                            setAds((prev) => prev.map((ad) => 
-                                ad.id === selectedAd.id ? { ...ad, image: imageUrl} : ad
-                            ));
-                        }
-                    }}
-                    />
+                    <input type="file" accept="image/*" onChange={handleImageChange}/>
                     <Button sx={{mt:2}} onClick={handleClose} variant="contained" color="primary">
                         닫기
                     </Button>
