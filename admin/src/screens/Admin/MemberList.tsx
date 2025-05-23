@@ -1,9 +1,8 @@
 import React, { Children, useEffect, useState } from "react";
 import { deleteMember, getAllMembers} from "../../services/memberService";
 import '../../styles/Admin.css';
-import { useNavigate } from "react-router-dom";
 import { Checkbox, Table, TableBody, TableCell, TableHead, TableRow, TextField, Paper, TableContainer, Button, Box} from "@mui/material";
-import EditMemberModal from "./MemberModal";
+import EditMemberModal from "../../components/MemberModal";
 import { updateMember } from "../../services/memberService";
 
 interface Member {
@@ -76,7 +75,6 @@ const MemberListScreen = () => {
     const [selectedIds, setSelectedIds] = useState<number[]>([]);
     const isAllSelected = selectedIds.length === members.length;
 
-    //체크박스
     const handleToggleAll = () => {
     if (isAllSelected) {
         setSelectedIds([]);
@@ -132,11 +130,8 @@ const MemberListScreen = () => {
             <Button
                 variant="contained"
                 size="medium"
-                onClick=
-                    {handleSearch}
-                    // 검색 실행
-                >검색
-            </Button>
+                onClick={handleSearch}
+            >검색</Button>
             <Button
                 variant="contained"
                 size="medium"
@@ -197,6 +192,7 @@ const MemberListScreen = () => {
             onSave={handleSave}
             member={selectedMember}
         />
+        
     </div>
     );
 };

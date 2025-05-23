@@ -1,15 +1,15 @@
 import api from "../config/api"
 
 export const getAllAds = () => {
-    return api.get("/admin/event")
+    return api.get("/admin/event", {
+        headers: { "Content-Type": "application/json" },
+    })
 };
 
 export const uploadAdImage = (image: File) => {
     const formData = new FormData();
     formData.append("images", image);
-    return api.post("/admin/event/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-    });
+    return api.post("/admin/event/upload", formData, );
 };
 
 export const setMainBanner = (imgId: number, number: number) => {

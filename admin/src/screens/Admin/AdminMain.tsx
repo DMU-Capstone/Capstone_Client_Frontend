@@ -9,9 +9,7 @@ import AdManager from "./AdManager";
 
 const AdminMain = () => {
     const [selectedMenu, setSelectedMenu] = useState("회원관리");
-    //const [sidebarOpen, setSidebarOpen] = useState(false);
     const sidebarWidth = 280;
-    //const navigate = useNavigate();
   
     const handleMenuSelect = (menu: string) => { 
       setSelectedMenu(menu);

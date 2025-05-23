@@ -4,9 +4,6 @@ const BASE_URL = 'http://134.185.99.89:8080';
 
 const api = axios.create({
   baseURL: BASE_URL,
-  headers: {
-    'Content-Type': 'application/json'
-  },
   withCredentials: true,
 });
 

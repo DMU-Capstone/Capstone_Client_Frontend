@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Modal, Box, Typography } from "@mui/material"
 import "../../styles/modalStyle.css"
 import { getAllAds, uploadAdImage, setMainBanner } from "../../services/AdService";
+import RegisterAdModal from "../../components/AdModal";
 
 interface Ad {
     id: number;
@@ -13,6 +14,7 @@ const AdManager = () => {
     const [ads, setAds] = useState<Ad[]>([]);
     const [selectedAd, setSelectedAd] = useState<Ad | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
+    const [registerModalOpen, setRegisterModalOpen] = useState(false);
 
     const fetchAds = async() => {
         try {
@@ -24,6 +26,7 @@ const AdManager = () => {
         }
     };
 
+    //이미지 업로드
     const handleImageChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file || selectedAd) return;
@@ -38,6 +41,7 @@ const AdManager = () => {
         }
     };
 
+    
     const handleSetBanner = async (imgId: number, number: number) => {
         try {
             await setMainBanner(imgId, number);
@@ -64,7 +68,9 @@ const AdManager = () => {
     return (
         <>
             <Typography variant="h5" gutterBottom>광고 목록</Typography>
-
+                <Button variant="contained" color="primary" onClick={() => setRegisterModalOpen(true)}>
+                    광고 등록
+                </Button>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
@@ -101,6 +107,15 @@ const AdManager = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+
+            <RegisterAdModal
+                open={registerModalOpen}
+                onClose={() => setRegisterModalOpen(false)}
+                onSuccess={() => {
+                    setRegisterModalOpen(false);
+                    fetchAds();
+                }}
+            />
 
             <Modal open={modalOpen} onClose={handleClose}>
                 <Box className="modalBox">

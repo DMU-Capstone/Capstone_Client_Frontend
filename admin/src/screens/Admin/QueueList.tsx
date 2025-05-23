@@ -1,5 +1,5 @@
 import React, { Children, useEffect, useState } from "react";
-import { deleteQueue, getAllQueues, updateQueue } from "../../services/queueService";
+import { getAllQueues } from "../../services/queueService";
 import '../../styles/Admin.css';
 import { useNavigate } from "react-router-dom";
 //import EditQueueModal from "./QueueModal";
@@ -37,22 +37,12 @@ const QueueList = () => {
             alert("대기열 불러오기 실패");
         }
     };
-    /*const handleSearch = () => {
-        if (searchTerm.trim() === '') {
-            setFilteredQueue(queue);
-        } else {
-            const filtered = queue.filter((item) => 
-                item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.code?.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            setFilteredQueue(filtered);
-        }
-    };*/
 
     useEffect(() => {
         fetchQueue();
     }, []);
 
+    //검색
     const handleSearch = () => {
         if (searchTerm.trim() === "") {
             setFilteredQueue(queue);
@@ -61,27 +51,6 @@ const QueueList = () => {
                 q.hostName.toLowerCase().includes(searchTerm.toLowerCase())
             );
             setFilteredQueue(filtered);
-        }
-    };
-
-    const handleDelete = async () => {
-        if (!window.confirm("삭제하시겠습니까?")) return;
-        try {
-            for (const id of selectedIds) await deleteQueue(id);
-            fetchQueue();
-            setSelectedIds([]);
-        } catch {
-            alert("삭제 실패");
-        }
-    };
-
-    const handleSave = async (updated: Queue) => {
-        try {
-            await updateQueue(updated.id, updated);
-            setModalOpen(false);
-            fetchQueue();
-        } catch {
-            alert("수정 실패");
         }
     };
 
@@ -167,7 +136,7 @@ const QueueList = () => {
                             <TableCell>{q.maxPeople} 명</TableCell>
                             <TableCell>{q.hostManagerName}</TableCell>
                             <TableCell>{q.startTime}</TableCell>
-                            <TableCell>{q.eddTime}</TableCell>
+                            <TableCell>{q.endTime}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
