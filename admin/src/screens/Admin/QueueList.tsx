@@ -96,11 +96,6 @@ const QueueList = () => {
                 size="medium"
                 onClick={handleSearch}>검색
             </Button>
-            <Button
-                variant="contained"
-                size="medium"
-                onClick={handleDelete}>삭제
-            </Button>
         </Box>
 
         <TableContainer component={Paper} className="container">
