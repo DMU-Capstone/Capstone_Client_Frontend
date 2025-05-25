@@ -86,7 +86,7 @@ const AdManager = () => {
                         <TableRow key={ad.id}>
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>
-                                <img src = {ad.dbFilePath} alt = "ad" style = {{ width: "100px" }} />
+                                <img src = {ad.dbFilePath} alt = "이미지" style = {{ width: "100px" }} />
                             </TableCell>
                             <TableCell>
                                 {new Date(ad.createdAt).toLocaleDateString()}
@@ -120,6 +120,17 @@ const AdManager = () => {
             <Modal open={modalOpen} onClose={handleClose}>
                 <Box className="modalBox">
                     <Typography variant="h6" gutterBottom>광고 수정</Typography>
+
+                    {selectedAd && (
+                    <Box sx={{ mb: 2 }}>
+                        <Typography variant="subtitle2">현재 이미지:</Typography>
+                        <img
+                        src={selectedAd.dbFilePath}
+                        alt="current ad"
+                        style={{ width: "200px", borderRadius: "8px", marginTop: "8px" }}
+                        />
+                    </Box>
+                    )}
                     <Typography>이미지를 업로드</Typography>
 
                     <input type="file" accept="image/*" onChange={handleImageChange}/>
