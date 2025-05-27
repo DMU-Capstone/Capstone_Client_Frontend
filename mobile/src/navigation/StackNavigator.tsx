@@ -4,14 +4,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from '../screens/SplashScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { SignupScreen } from '../screens/SignupScreen';
-// import { HomeScreen } from '../screens/Homescreen';
+import { MainScreen } from '../screens/MainScreen';
 
 
 export type RootStackParamList = {
   SplashScreen: undefined;
   LoginScreen: undefined;
   SignupScreen: undefined;
-  HomeScreen: undefined;
+  MainScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -22,7 +22,7 @@ const StackNavigator = () => {
       <Stack.Screen name="SplashScreen" component={SplashScreen} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="SignupScreen" component={SignupScreen} />
-      {/* <Stack.Screen name="HomeScreen" component={HomeScreen} /> */}
+      <Stack.Screen name="MainScreen" component={MainScreen} />
     </Stack.Navigator>
   );
 };

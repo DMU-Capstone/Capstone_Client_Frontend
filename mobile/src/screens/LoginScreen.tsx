@@ -5,20 +5,20 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  ActivityIndicator,
 } from 'react-native';
 
-import axios from 'axios';
+
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/StackNavigator';
 import * as WebBrowser from 'expo-web-browser';
+import { handleLogin } from '@shared/api/auth/Login';
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'LoginScreen'>;
 
 
 export const LoginScreen: React.FC = () => {
-  const [phone, setPhone] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const navigation = useNavigation<LoginScreenNavigationProp>();
@@ -33,35 +33,17 @@ export const LoginScreen: React.FC = () => {
     await WebBrowser.openBrowserAsync(KAKAO_AUTH_URL);
   };
 
+  const formatPhoneNumber = (value: string) => {
+    const onlyNums = value.replace(/\D/g, ''); // 숫자만 추출
+    if (onlyNums.length < 4) return onlyNums;
+    if (onlyNums.length < 8)
+      return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3)}`;
+    return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}-${onlyNums.slice(7, 11)}`;
+  };
 
-  const handleLogin = async () => {
-    try {
-      const response = await axios.post(
-        'http://134.185.99.89:8080/login',
-        {
-          phone_number: phone,
-          password: password,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Client-Type': 'mobile',
-          },
-        }
-      );
 
-      console.log('로그인 성공:', response.data);
-
-      // 토큰 저장하거나 다음 화면으로 이동
-      // 예: navigation.navigate('HomeScreen');
-    } catch (error: any) {
-      if (error.response) {
-        console.log('로그인 실패:', error.response.data);
-        alert('로그인 실패: ' + error.response.status);
-      } else {
-        console.error('에러:', error.message);
-      }
-    }
+  const onPressLogin = () => {
+    handleLogin({ username, password });
   };
 
 
@@ -77,8 +59,9 @@ export const LoginScreen: React.FC = () => {
 
       <TextInput
         placeholder="전화번호"
-        value={phone}
-        onChangeText={setPhone}
+        value={username}
+        onChangeText={(text) => setUsername(formatPhoneNumber(text))}
+        keyboardType="phone-pad"
         style={styles.input}
       />
 
@@ -90,11 +73,11 @@ export const LoginScreen: React.FC = () => {
         style={styles.input}
       />
 
-      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+      <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('MainScreen')}>
         <Text style={styles.loginText}>로그인</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => navigation.navigate('SignupScreen')} style={styles.signupButton}>
+      <TouchableOpacity style={styles.signupButton} onPress={() => navigation.navigate('SignupScreen')} >
         <Text style={styles.signupText}>회원가입</Text>
       </TouchableOpacity>
 
