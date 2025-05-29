@@ -19,3 +19,7 @@ export const setMainBanner = (imgId: number, number: number) => {
 export const getMainBanner = () => {
     return api.get("/admin/event/select");
 };
+
+export const deleteAd = (adId: number) => {
+    return api.delete(`/admin/event/${adId}`);
+};

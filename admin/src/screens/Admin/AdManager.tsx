@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Modal, Box, Typography } from "@mui/material"
 import "../../styles/modalStyle.css"
-import { getAllAds, uploadAdImage, setMainBanner } from "../../services/AdService";
+import { getAllAds, uploadAdImage, setMainBanner, deleteAd } from "../../services/AdService";
 import RegisterAdModal from "../../components/AdModal";
+import api, { BASE_URL } from "../../config/api";
 
 interface Ad {
     id: number;
-    dbFilePath: string;
+    imgPath: string;
     createdAt: string;
 }
 
@@ -61,9 +62,28 @@ const AdManager = () => {
         setModalOpen(false);
     };
 
+    const handleDelete = async (id: number) => {
+        const confirmDelete = window.confirm("이미지를 삭제하시겠습니까?");
+        if (!confirmDelete) return;
+
+        try {
+            await deleteAd(id);
+            alert("이미지가 삭제되었습니다.");
+            fetchAds();
+        } catch (error) {
+            alert("삭제 실패했습니다.")
+        }
+    };
+
     useEffect(() => {
         fetchAds();
+        if (selectedAd) {
+            console.log("🟡 선택된 광고:", selectedAd);
+            console.log("🟡 선택된 광고 경로:", selectedAd.imgPath);
+        }
     }, []);
+    
+    
 
     return (
         <>
@@ -86,7 +106,15 @@ const AdManager = () => {
                         <TableRow key={ad.id}>
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>
-                                <img src = {ad.dbFilePath} alt = "이미지" style = {{ width: "100px" }} />
+                                <a
+                                    href={`${BASE_URL}${ad.imgPath}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer">
+                                    <img
+                                        src={`${BASE_URL}${ad.imgPath}`}
+                                        alt="이미지"
+                                        style={{ width: "100px", cursor: "pointer" }}/>
+                                </a>
                             </TableCell>
                             <TableCell>
                                 {new Date(ad.createdAt).toLocaleDateString()}
@@ -101,6 +129,12 @@ const AdManager = () => {
                                     sx={{ml:1}}
                                     onClick={() => handleSetBanner(ad.id, 0)}
                                 >메인으로 설정</Button>
+                                <Button
+                                    variant="outlined"
+                                    color="error"
+                                    sx={{ ml: 1 }}
+                                    onClick={() => handleDelete(ad.id)}
+                                >삭제</Button>
                             </TableCell>
                         </TableRow>
                         ))}
@@ -125,9 +159,9 @@ const AdManager = () => {
                     <Box sx={{ mb: 2 }}>
                         <Typography variant="subtitle2">현재 이미지:</Typography>
                         <img
-                        src={selectedAd.dbFilePath}
-                        alt="current ad"
-                        style={{ width: "200px", borderRadius: "8px", marginTop: "8px" }}
+                            src={selectedAd.imgPath}
+                            alt="current ad"
+                            style={{ width: "200px", borderRadius: "8px", marginTop: "8px" }}
                         />
                     </Box>
                     )}
