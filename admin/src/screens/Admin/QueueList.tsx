@@ -1,8 +1,7 @@
 import React, { Children, useEffect, useState } from "react";
-import { deleteQueue, getAllQueues, updateQueue } from "../../services/queueService";
+import { getAllQueues, getActiveQueues, getQueueDetail } from "../../services/queueService";
 import '../../styles/Admin.css';
 import { useNavigate } from "react-router-dom";
-//import EditQueueModal from "./QueueModal";
 import { Checkbox, Table, TableBody, TableCell, TableHead, TableRow, TextField, Paper, TableContainer, Button, Box} from "@mui/material";
 import Sidebar from "./Sidebar";
 
@@ -20,6 +19,21 @@ interface Queue {
     endTime: string;
 }
 
+//실시간 큐 조회 추가
+interface ActiveQueue {
+  id: number;
+  name: string;
+  hostImage: {
+    imgPath: string;
+    createdAt: string;
+  };
+}
+interface QueueDetail {
+  phoneNumber: string;
+  name: string;
+  count: number;
+}
+
 const QueueList = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
@@ -27,6 +41,8 @@ const QueueList = () => {
     const [selectedQueue, setSelectedQueue] = useState<Queue | null>(null);
     const [queue, setQueue] = useState<Queue[]>([]);  //queue 배열
     const [filteredQueue, setFilteredQueue] = useState<any[]>([]);
+    //실시간 큐 조회 추가
+    const [activeCounts, setActiveCounts] = useState<Record<number, number>>({});
 
     const fetchQueue = async() => {
         try {
@@ -37,22 +53,8 @@ const QueueList = () => {
             alert("대기열 불러오기 실패");
         }
     };
-    const handleSearch = () => {
-        if (searchTerm.trim() === '') {
-            setFilteredQueue(queue);
-        } else {
-            const filtered = queue.filter((item) => 
-                item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.code?.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-            setFilteredQueue(filtered);
-        }
-    };
 
-    useEffect(() => {
-        fetchQueue();
-    }, []);
-
+    //검색
     const handleSearch = () => {
         if (searchTerm.trim() === "") {
             setFilteredQueue(queue);
@@ -61,27 +63,6 @@ const QueueList = () => {
                 q.hostName.toLowerCase().includes(searchTerm.toLowerCase())
             );
             setFilteredQueue(filtered);
-        }
-    };
-
-    const handleDelete = async () => {
-        if (!window.confirm("삭제하시겠습니까?")) return;
-        try {
-            for (const id of selectedIds) await deleteQueue(id);
-            fetchQueue();
-            setSelectedIds([]);
-        } catch {
-            alert("삭제 실패");
-        }
-    };
-
-    const handleSave = async (updated: Queue) => {
-        try {
-            await updateQueue(updated.id, updated);
-            setModalOpen(false);
-            fetchQueue();
-        } catch {
-            alert("수정 실패");
         }
     };
 
@@ -101,6 +82,32 @@ const QueueList = () => {
             setSelectedIds(filteredQueue.map((Queue) => Queue.id));
         }
     };
+
+    //실시간 큐 조회 추가
+    const fetchActiveCounts = async () => {
+        try {
+            const { data: activeList } = await getActiveQueues();
+
+            const countsMap: Record<number, number> = {};
+
+            await Promise.all(
+            activeList.map(async (queue: ActiveQueue) => {
+                const { data } = await getQueueDetail(queue.id);
+                countsMap[queue.id] = data?.[0]?.count ?? 0;
+            })
+            );
+
+            setActiveCounts(countsMap);
+        } catch (error) {
+            console.error("Redis 실시간 큐 조회 실패", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchQueue();
+        fetchActiveCounts();
+    }, []);
+    
     
     return (
     <div>
@@ -127,11 +134,6 @@ const QueueList = () => {
                 size="medium"
                 onClick={handleSearch}>검색
             </Button>
-            <Button
-                variant="contained"
-                size="medium"
-                onClick={handleDelete}>삭제
-            </Button>
         </Box>
 
         <TableContainer component={Paper} className="container">
@@ -150,8 +152,8 @@ const QueueList = () => {
                         <TableCell>대기인원</TableCell>
                         <TableCell>매니저</TableCell>
                         <TableCell>시작</TableCell>
+                        <TableCell>상태</TableCell>
                         <TableCell>종료</TableCell>
-                        <TableCell>관리</TableCell>
                     </TableRow>
                 </TableHead>
 
@@ -168,13 +170,10 @@ const QueueList = () => {
                             <TableCell>{q.maxPeople} 명</TableCell>
                             <TableCell>{q.hostManagerName}</TableCell>
                             <TableCell>{q.startTime}</TableCell>
-                            <TableCell>{q.eddTime}</TableCell>
                             <TableCell>
-                                <Button onClick={() => {
-                                    setSelectedQueue(q);
-                                    setModalOpen(true);
-                                }} variant="contained" size="small" color="primary">수정</Button>
+                                {activeCounts[q.id] != null ? `활성화 / ${activeCounts[q.id]} 명` : "종료"}
                             </TableCell>
+                            <TableCell>{q.endTime}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
