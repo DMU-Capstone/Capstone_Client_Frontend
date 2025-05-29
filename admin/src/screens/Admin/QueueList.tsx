@@ -3,7 +3,7 @@ import { getAllQueues, getActiveQueues, getQueueDetail } from "../../services/qu
 import '../../styles/Admin.css';
 import { useNavigate } from "react-router-dom";
 import { Checkbox, Table, TableBody, TableCell, TableHead, TableRow, TextField, Paper, TableContainer, Button, Box} from "@mui/material";
-import Sidebar from "./Sidebar";
+import EndQueueModal from "../../components/QueueModal";
 
 interface Queue {
     id: number;
@@ -37,8 +37,9 @@ interface QueueDetail {
 const QueueList = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState("");
-    const [modalOpen, setModalOpen] = useState(false);
-    const [selectedQueue, setSelectedQueue] = useState<Queue | null>(null);
+    const [activeQueues, setActiveQueues] = useState<Queue[]>([]);
+    const [endedQueues, setEndedQueues] = useState<Queue[]>([]);
+    const [queueModalOpen, setQueueModalOpen] = useState(false);
     const [queue, setQueue] = useState<Queue[]>([]);  //queue 배열
     const [filteredQueue, setFilteredQueue] = useState<any[]>([]);
     //실시간 큐 조회 추가
@@ -47,8 +48,16 @@ const QueueList = () => {
     const fetchQueue = async() => {
         try {
             const { data } = await getAllQueues();
-            setQueue(data.content);
-            setFilteredQueue(data.content);
+            const allQueues: Queue[] = data.content;
+
+            //date 변환 및 종료시간 비교
+            const now = new Date().getTime();
+            
+            const active = allQueues.filter(q => new Date(q.endTime).getTime() > now);
+
+            setActiveQueues(active);
+            setQueue(allQueues);
+            setFilteredQueue(active);
         } catch {
             alert("대기열 불러오기 실패");
         }
@@ -134,11 +143,17 @@ const QueueList = () => {
                 size="medium"
                 onClick={handleSearch}>검색
             </Button>
+            <Button
+                variant="outlined"
+                sx={{ ml: 2 }}
+                onClick={() => setQueueModalOpen(true)}
+                >
+                기록 확인하기
+            </Button>
         </Box>
 
         <TableContainer component={Paper} className="container">
             <Table className="table">
-
                 <TableHead>
                     <TableRow>
                         <TableCell padding="checkbox">
@@ -180,6 +195,10 @@ const QueueList = () => {
 
             </Table>
         </TableContainer>
+        <EndQueueModal 
+            open={queueModalOpen}
+            onClose={() => setQueueModalOpen(false)}
+        />
         
         </div>
     </div>
