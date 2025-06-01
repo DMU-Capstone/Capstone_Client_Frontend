@@ -4,6 +4,8 @@ import '../../styles/Admin.css';
 import { useNavigate } from "react-router-dom";
 import { Checkbox, Table, TableBody, TableCell, TableHead, TableRow, TextField, Paper, TableContainer, Button, Box} from "@mui/material";
 import EndQueueModal from "../../components/QueueModal";
+import api, { BASE_URL } from "../../config/api";
+
 
 interface Queue {
     id: number;
@@ -44,6 +46,8 @@ const QueueList = () => {
     const [filteredQueue, setFilteredQueue] = useState<any[]>([]);
     //실시간 큐 조회 추가
     const [activeCounts, setActiveCounts] = useState<Record<number, number>>({});
+    const [activeQueuesInfos, setActiveQueuesInfos] = useState<ActiveQueue[]>([]);
+
 
     const fetchQueue = async() => {
         try {
@@ -96,7 +100,7 @@ const QueueList = () => {
     const fetchActiveCounts = async () => {
         try {
             const { data: activeList } = await getActiveQueues();
-
+            setActiveQueuesInfos(activeList);
             const countsMap: Record<number, number> = {};
 
             await Promise.all(
@@ -115,6 +119,7 @@ const QueueList = () => {
     useEffect(() => {
         fetchQueue();
         fetchActiveCounts();
+        
     }, []);
     
     
@@ -163,6 +168,7 @@ const QueueList = () => {
                                 onChange={handleToggleAll}
                             />
                         </TableCell>
+                        
                         <TableCell>호스트명</TableCell>
                         <TableCell>대기인원</TableCell>
                         <TableCell>매니저</TableCell>
@@ -180,6 +186,19 @@ const QueueList = () => {
                                     checked={selectedIds.includes(q.id)}
                                     onChange={()=>handleToggleOne(q.id)}
                                 />
+                            </TableCell>
+                            <TableCell>
+                            <Box display="flex" alignItems="center" gap={1}>
+                                {/* 이미지 표시 */}
+                                {activeQueuesInfos.find((a) => a.id === q.id)?.hostImage?.imgPath && (
+                                <img
+                                    src={`${BASE_URL}${activeQueuesInfos.find((a) => a.id === q.id)?.hostImage.imgPath}`}
+                                    alt="host"
+                                    style={{ width: 40, height: 40, objectFit: "cover", borderRadius: "50%" }}
+                                />
+                                )}
+                                {q.hostName}
+                            </Box>
                             </TableCell>
                             <TableCell>{q.hostName}</TableCell>
                             <TableCell>{q.maxPeople} 명</TableCell>
