@@ -4,6 +4,7 @@ import "../../styles/modalStyle.css"
 import { getAllAds, uploadAdImage, setMainBanner, deleteAd } from "../../services/AdService";
 import RegisterAdModal from "../../components/AdModal";
 import api, { BASE_URL } from "../../config/api";
+import BannerModal from "../../components/BannerModal";
 
 interface Ad {
     id: number;
@@ -16,6 +17,7 @@ const AdManager = () => {
     const [selectedAd, setSelectedAd] = useState<Ad | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [registerModalOpen, setRegisterModalOpen] = useState(false);
+    const [bannerModalOpen, setBannerModalOpen] = useState(false);
 
     const fetchAds = async() => {
         try {
@@ -91,6 +93,13 @@ const AdManager = () => {
                 <Button variant="contained" color="primary" onClick={() => setRegisterModalOpen(true)}>
                     광고 등록
                 </Button>
+                <Button
+                    variant="outlined"
+                    color="secondary"
+                    sx={{ml:1}}
+                    onClick={() => setBannerModalOpen(true)}>
+                    메인화면 배너 설정
+                </Button>
             <TableContainer component={Paper}>
                 <Table>
                     <TableHead>
@@ -125,12 +134,6 @@ const AdManager = () => {
                                 </Button>
                                 <Button
                                     variant="outlined"
-                                    color="secondary"
-                                    sx={{ml:1}}
-                                    onClick={() => handleSetBanner(ad.id, 0)}
-                                >메인으로 설정</Button>
-                                <Button
-                                    variant="outlined"
                                     color="error"
                                     sx={{ ml: 1 }}
                                     onClick={() => handleDelete(ad.id)}
@@ -149,6 +152,11 @@ const AdManager = () => {
                     setRegisterModalOpen(false);
                     fetchAds();
                 }}
+            />
+
+            <BannerModal
+                open={bannerModalOpen}
+                onClose={() => setBannerModalOpen(false)}
             />
 
             <Modal open={modalOpen} onClose={handleClose}>
