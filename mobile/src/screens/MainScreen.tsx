@@ -26,17 +26,17 @@ export const MainScreen: React.FC = () => {
       {/* 인기 줄서기 스팟 */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>인기 줄서기 스팟</Text>
+          <Text style={styles.sectionTitle}>트렌드 줄서기 스팟</Text>
           <TouchableOpacity><Text> 전체보기 </Text></TouchableOpacity>
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={styles.horizontalContainer}>
           {[1, 2].map((item) => (
             <View key={item} style={styles.card}>
               <Text>동양미래대 {item === 1 ? '축제' : '학식'}</Text>
             </View>
           ))}
-        </ScrollView>
+        </View>
       </View>
 
       {/* 급상승 검색어 */}
@@ -62,40 +62,21 @@ export const MainScreen: React.FC = () => {
           ))}
         </View>
       </View>
-      {/* 인기 줄서기 스팟 */}
+
+      {/* 내 주변 줄서기 스팟 */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>인기 줄서기 스팟</Text>
+          <Text style={styles.sectionTitle}>내 주변변 줄서기 스팟</Text>
           <TouchableOpacity><Text> 전체보기 </Text></TouchableOpacity>
         </View>
 
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <View style={styles.horizontalContainer}>
           {[1, 2].map((item) => (
             <View key={item} style={styles.card}>
               <Text>동양미래대 {item === 1 ? '축제' : '학식'}</Text>
             </View>
           ))}
-        </ScrollView>
-      </View>
-
-      <View style={styles.popularCard}>
-        <Text style={styles.popularTitle}>🔥 오늘 가장 인기 있는 장소</Text>
-
-        <View style={styles.popularList}>
-          <Text style={styles.popularItem}>
-            <Text style={styles.popularNumber}>1. </Text>동양미래대 축제
-          </Text>
-          <Text style={styles.popularItem}>
-            <Text style={styles.popularNumber}>2. </Text>강남 치킨집
-          </Text>
-          <Text style={styles.popularItem}>
-            <Text style={styles.popularNumber}>3. </Text>이태원 클럽
-          </Text>
         </View>
-
-        <Text style={styles.popularFooter}>
-          현재 줄서기 이용자 수: <Text style={styles.popularCount}>1,223명</Text>
-        </Text>
       </View>
 
 
@@ -136,37 +117,10 @@ const styles = StyleSheet.create({
     // Android용 그림자
     elevation: 5,
   },
-
-  popularTitle: {
-    color: 'red',
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 12,
+  horizontalContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
   },
-
-  popularList: {
-    gap: 4,
-    marginBottom: 12,
-  },
-
-  popularItem: {
-    fontWeight: '600',
-    fontSize: 15,
-  },
-
-  popularNumber: {
-    fontWeight: 'bold',
-  },
-
-  popularFooter: {
-    fontSize: 13,
-    color: '#444',
-  },
-
-  popularCount: {
-    color: '#0066ff',
-    fontWeight: 'bold',
-  }
-
 });
 
