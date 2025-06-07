@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Container, Form, Button } from 'react-bootstrap';
+import GuestService from '../Service/GuestService';
 
 
 type FormData = {
@@ -23,6 +24,19 @@ const schema = yup.object().shape({
     .min(1, '최소 1명 이상이어야 합니다.')
     .required('인원수는 필수입니다.'),
 });
+
+const handleQueueSubmit = async (formData: { phoneNumber: string; name: string; peopleCount: number }) => {
+  try {
+    const response = await GuestService.joinQueue('123', {
+      phoneNumber: formData.phoneNumber,
+      name: formData.name,
+      count: formData.peopleCount,
+    });
+    console.log('✅ 대기열 등록 성공:', response);
+  } catch (err) {
+    console.error('❌ 대기열 등록 실패:', err);
+  }
+};
 
 export default function QueueRegisterPage() {
   const {
@@ -46,7 +60,7 @@ export default function QueueRegisterPage() {
         </Button>
         <h5 className="fw-bold mb-4">대기열에 등록하기 위한 정보를 입력해주세요.</h5>
 
-        <Form onSubmit={handleSubmit(onSubmit)}>
+        <Form onSubmit={handleSubmit(handleQueueSubmit)}>
           <Form.Group className="mb-3">
             <Form.Label>휴대폰 번호</Form.Label>
             <Form.Control type="text" placeholder="010-1111-1111" {...register('phoneNumber')} />
