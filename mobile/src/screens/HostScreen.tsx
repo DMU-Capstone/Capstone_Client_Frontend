@@ -37,7 +37,7 @@ export const HostScreen: React.FC = () => {
 
 
 
-            <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('MainScreen')}>
+            <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('HomeScreen')}>
                 <Text style={styles.loginText}>로그인</Text>
             </TouchableOpacity>
 

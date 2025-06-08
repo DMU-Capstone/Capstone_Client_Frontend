@@ -4,19 +4,17 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SplashScreen from '../screens/SplashScreen';
 import { LoginScreen } from '../screens/LoginScreen';
 import { SignupScreen } from '../screens/SignupScreen';
-import { MainScreen } from '../screens/MainScreen';
-import { StoplistScreen } from '../screens/StoplistScreen';
-import { HostRegisterScreen } from '../screens/HostRegisterScreen';
-import { NoticeScreen } from '../screens/NoticeScreen';
+import { BottomTabNavigator } from './BottomTabNavigator';
+import { WaitingListScreen } from '../screens/WaitingListScreen';
+import { HomeScreen } from '../screens/Home/HomeScreen';
 
 export type RootStackParamList = {
   SplashScreen: undefined;
-  MainScreen: undefined;
+  MainTabs: undefined;
+  WaitingListScreen: undefined;
   LoginScreen: undefined;
   SignupScreen: undefined;
-  StoplistScreen: undefined;
-  NoticeScreen: undefined;
-  HostRegisterScreen: undefined;
+  HomeScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -25,12 +23,11 @@ const StackNavigator = () => {
   return (
     <Stack.Navigator initialRouteName="SplashScreen" screenOptions={{ headerShown: false }}>
       <Stack.Screen name="SplashScreen" component={SplashScreen} />
-      <Stack.Screen name="MainScreen" component={MainScreen} />
+      <Stack.Screen name="MainTabs" component={BottomTabNavigator} />
+      <Stack.Screen name="WaitingListScreen" component={WaitingListScreen} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="SignupScreen" component={SignupScreen} />
-      <Stack.Screen name="StoplistScreen" component={StoplistScreen} />
-      <Stack.Screen name="NoticeScreen" component={NoticeScreen} />
-      <Stack.Screen name="HostRegisterScreen" component={HostRegisterScreen} />
+      <Stack.Screen name="HomeScreen" component={HomeScreen} />
     </Stack.Navigator>
   );
 };

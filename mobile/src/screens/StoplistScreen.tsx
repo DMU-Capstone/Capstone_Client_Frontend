@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 
 import { Header } from '../components/Header';
+import { CardTwo } from '../components/CardTwo';
 
 
 export const StoplistScreen: React.FC = () => {
@@ -12,8 +13,38 @@ export const StoplistScreen: React.FC = () => {
     <View style={styles.container}>
       <Header />
       <View style={styles.content}>
-        <Text style={styles.title}>대기 목록</Text>
-        {/* 대기 목록 내용을 여기에 추가 */}
+        <View style={styles.horizontalContainer}>
+          <CardTwo
+            imageSource={{ uri: 'https://www.shinsegaegroupnewsroom.com/wp-content/uploads/2021/10/%EC%8B%A0%EC%84%B8%EA%B3%84%EC%9D%B8%ED%84%B0%EB%82%B4%EC%85%94%EB%82%A0_%EB%B3%B8%EB%AC%B81.png' }}
+            title="동양미래대 학식"
+            waitingCount={7}
+            estimatedTime="예상시간 35 ~ 55분"
+            onPress={() => console.log('CardTwo clicked!')}
+          />
+          <CardTwo
+            imageSource={{ uri: 'https://www.shinsegaegroupnewsroom.com/wp-content/uploads/2021/10/%EC%8B%A0%EC%84%B8%EA%B3%84%EC%9D%B8%ED%84%B0%EB%82%B4%EC%85%94%EB%82%A0_%EB%B3%B8%EB%AC%B81.png' }}
+            title="동양미래대 학식"
+            waitingCount={7}
+            estimatedTime="예상시간 35 ~ 55분"
+            onPress={() => console.log('CardTwo clicked!')}
+          />
+
+          <CardTwo
+            imageSource={{ uri: 'https://www.shinsegaegroupnewsroom.com/wp-content/uploads/2021/10/%EC%8B%A0%EC%84%B8%EA%B3%84%EC%9D%B8%ED%84%B0%EB%82%B4%EC%85%94%EB%82%A0_%EB%B3%B8%EB%AC%B81.png' }}
+            title="동양미래대 학식"
+            waitingCount={7}
+            estimatedTime="예상시간 35 ~ 55분"
+            onPress={() => console.log('CardTwo clicked!')}
+          />
+
+          <CardTwo
+            imageSource={{ uri: 'https://www.shinsegaegroupnewsroom.com/wp-content/uploads/2021/10/%EC%8B%A0%EC%84%B8%EA%B3%84%EC%9D%B8%ED%84%B0%EB%82%B4%EC%85%94%EB%82%A0_%EB%B3%B8%EB%AC%B81.png' }}
+            title="동양미래대 학식"
+            waitingCount={7}
+            estimatedTime="예상시간 35 ~ 55분"
+            onPress={() => console.log('CardTwo clicked!')}
+          />
+        </View>
       </View>
     </View>
   );
@@ -38,6 +69,10 @@ const styles = StyleSheet.create({
   section: { padding: 16 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 16 },
   sectionTitle: { fontSize: 20, fontWeight: 'bold' },
+  horizontalContainer: {
+    flexDirection: 'row',
+    marginTop: 12,
+  },
   card: {
     width: 160, height: 100, marginRight: 12,
     backgroundColor: '#f2f2f2', borderRadius: 10,

@@ -3,52 +3,68 @@ import React from 'react';
 import {
     View, Text, StyleSheet, TextInput, TouchableOpacity
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationState } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { RootStackParamList } from '../navigation/StackNavigator';
+import { TabParamList } from '../navigation/TopTabNavigator';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+type CombinedNavigationProp = NativeStackNavigationProp<RootStackParamList> & BottomTabNavigationProp<TabParamList>;
 
 export const Header: React.FC = () => {
-    const navigation = useNavigation<NavigationProp>();
+    const navigation = useNavigation<CombinedNavigationProp>();
     const [activeTab, setActiveTab] = React.useState('홈');
 
     React.useEffect(() => {
-        const unsubscribe = navigation.addListener('state', (e) => {
-            const currentRoute = e.data.state.routes[e.data.state.index];
-            switch (currentRoute.name) {
-                case 'MainScreen':
-                    setActiveTab('홈');
-                    break;
-                case 'StoplistScreen':
-                    setActiveTab('대기 목록');
-                    break;
-                case 'NoticeScreen':
-                    setActiveTab('공지사항');
-                    break;
-                case 'HostRegisterScreen':
-                    setActiveTab('호스트 등록');
-                    break;
-            }
-        });
+        // 부모 탭 네비게이터를 가져옵니다.
+        const parentNavigation = navigation.getParent<BottomTabNavigationProp<TabParamList>>();
 
-        return unsubscribe;
-    }, [navigation]);
+        // parentNavigation이 존재하는 경우에만 리스너를 추가합니다.
+        if (parentNavigation) {
+            const unsubscribe = parentNavigation.addListener('state', () => {
+                // 부모 네비게이터의 현재 상태를 가져옵니다.
+                // NavigationState를 사용하여 타입을 명확히 합니다.
+                const parentState: NavigationState | undefined = parentNavigation.getState(); 
+
+                if (parentState && parentState.type === 'tab' && parentState.routes[parentState.index]) {
+                    const currentRouteName = parentState.routes[parentState.index].name;
+
+                    // 이제 currentRouteName은 TabParamList의 키로 올바르게 추론됩니다.
+                    switch (currentRouteName) {
+                        case 'Home':
+                            setActiveTab('홈');
+                            break;
+                        case 'Stoplist':
+                            setActiveTab('대기 목록');
+                            break;
+                        case 'Notice':
+                            setActiveTab('공지사항');
+                            break;
+                        case 'HostRegister':
+                            setActiveTab('호스트 등록');
+                            break;
+                    }
+                }
+            });
+
+            return unsubscribe; // 리스너 정리
+        }
+    }, [navigation]); // navigation 객체가 변경될 때 리스너를 다시 등록합니다.
 
     const handleTabPress = (tabName: string) => {
         setActiveTab(tabName);
         switch (tabName) {
             case '홈':
-                navigation.navigate('MainScreen');
+                navigation.navigate('Home');
                 break;
             case '대기 목록':
-                navigation.navigate('StoplistScreen');
+                navigation.navigate('Stoplist');
                 break;
             case '공지사항':
-                navigation.navigate('NoticeScreen');
+                navigation.navigate('Notice');
                 break;
             case '호스트 등록':
-                navigation.navigate('HostRegisterScreen');
+                navigation.navigate('HostRegister');
                 break;
         }
     };
