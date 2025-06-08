@@ -6,7 +6,7 @@ import { LoginScreen } from '../screens/LoginScreen';
 import { SignupScreen } from '../screens/SignupScreen';
 import { BottomTabNavigator } from './BottomTabNavigator';
 import { WaitingListScreen } from '../screens/WaitingListScreen';
-import { HomeScreen } from '../screens/Home/HomeScreen';
+import { WaitingNumScreen } from '../screens/WaitingList/WaitingNumScreen';
 
 export type RootStackParamList = {
   SplashScreen: undefined;
@@ -14,7 +14,7 @@ export type RootStackParamList = {
   WaitingListScreen: undefined;
   LoginScreen: undefined;
   SignupScreen: undefined;
-  HomeScreen: undefined;
+  WaitingNumScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -27,7 +27,7 @@ const StackNavigator = () => {
       <Stack.Screen name="WaitingListScreen" component={WaitingListScreen} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
       <Stack.Screen name="SignupScreen" component={SignupScreen} />
-      <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen name="WaitingNumScreen" component={WaitingNumScreen} />
     </Stack.Navigator>
   );
 };

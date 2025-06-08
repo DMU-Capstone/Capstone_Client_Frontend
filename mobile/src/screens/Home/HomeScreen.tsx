@@ -1,5 +1,5 @@
 // HomeScreen.tsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity, Image
 } from 'react-native';
@@ -9,25 +9,67 @@ import { RootStackParamList } from '../../navigation/StackNavigator';
 
 import { Header } from '../../components/Header';
 import { Card } from '../../components/Card';
+import { getAllHostSessions, HostSession, API_BASE_URL } from '../../services/hostApi'; // API_BASE_URL 임포트
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export const HomeScreen: React.FC = () => {
+  console.log('HomeScreen rendered'); // 컴포넌트 렌더링 확인 로그
   const navigation = useNavigation<HomeScreenNavigationProp>();
+  const [hostSessions, setHostSessions] = useState<HostSession[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  console.log('Loading state:', loading); // 로딩 상태 확인 로그
+  console.log('Error state:', error);   // 에러 상태 확인 로그
+
+  useEffect(() => {
+    const fetchHostSessions = async () => {
+      try {
+        const data = await getAllHostSessions();
+        console.log('Fetched host sessions data:', data); // 데이터 확인을 위한 로그 추가
+        setHostSessions(data);
+      } catch (err) {
+        setError('호스트 세션을 불러오는 데 실패했습니다.');
+        console.error('Error fetching host sessions:', err); // 오류 디버깅을 위한 로그 강화
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHostSessions();
+  }, []);
 
   const handleNavigateToWaitingList = () => {
     navigation.navigate('WaitingListScreen');
   };
+
+  if (loading) {
+    console.log('Displaying loading message'); // 로딩 메시지 표시 확인 로그
+    return (
+      <View style={styles.loadingContainer}>
+        <Text>데이터를 불러오는 중...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    console.log('Displaying error message:', error); // 에러 메시지 표시 확인 로그
+    return (
+      <View style={styles.errorContainer}>
+        <Text>{error}</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <Header />
 
-        {/* 배너 (슬라이드 대신 단일 이미지로 예시) */}
         <View style={styles.banner}>
           <Image
-            source={{ uri: 'https://www.fashionbiz.co.kr/images/etcImg/1734912608622-%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B9%E3%84%B7.jpg' }} 
+            source={{ uri: 'https://www.fashionbiz.co.kr/images/etcImg/1734912608622-%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B7.jpg' }} 
             style={styles.bannerImage}
             resizeMode="cover"
           />
@@ -40,18 +82,30 @@ export const HomeScreen: React.FC = () => {
             <TouchableOpacity onPress={handleNavigateToWaitingList}><Text> 전체보기 </Text></TouchableOpacity>
           </View>
 
-          <View style={styles.horizontalContainer}>
-            <Card
-              imageSource={'https://www.shinsegaegroupnewsroom.com/wp-content/uploads/2021/10/%EC%8B%A0%EC%84%B8%EA%B3%84%EC%9D%B8%ED%84%B0%EB%82%B4%EC%85%94%EB%82%A0_%EB%B3%B8%EB%AC%B81.png'}
-              title="동양미래대 축제"
-              onPress={handleNavigateToWaitingList}
-            />
-            <Card
-              imageSource={'https://www.shinsegaegroupnewsroom.com/wp-content/uploads/2021/10/%EC%8B%A0%EC%84%B8%EA%B3%84%EC%9D%B8%ED%84%B0%EB%82%B4%EC%85%94%EB%82%A0_%EB%B3%B8%EB%AC%B81.png'}
-              title="동양미래대 학식"
-              onPress={handleNavigateToWaitingList}
-            />
-          </View>
+          <ScrollView horizontal style={styles.horizontalScrollView} showsHorizontalScrollIndicator={false}>
+            {hostSessions.map((session) => {
+              let imageUrl = 'https://via.placeholder.com/150'; 
+              if (session.imgUrl) {
+                if (session.imgUrl.startsWith('http://')) {
+                  
+                  imageUrl = `https://${session.imgUrl.substring(7)}`;
+                } else if (session.imgUrl.startsWith('https://')) {
+                  imageUrl = session.imgUrl;
+                } else {    
+                  imageUrl = `${API_BASE_URL}${session.imgUrl}`;
+                }
+              }
+              console.log('Final imageUrl:', imageUrl); // 디버깅을 위한 로그 추가
+              return (
+                <Card
+                  key={session.hostId}
+                  imageSource={imageUrl}
+                  title={session.hostName}
+                  onPress={handleNavigateToWaitingList}
+                />
+              );
+            })}
+          </ScrollView>
         </View>
 
         {/* 급상승 검색어 */}
@@ -85,18 +139,32 @@ export const HomeScreen: React.FC = () => {
             <TouchableOpacity><Text> 전체보기 </Text></TouchableOpacity>
           </View>
 
-          <View style={styles.horizontalContainer}>
-            <Card
-              imageSource={'https://www.shinsegaegroupnewsroom.com/wp-content/uploads/2021/10/%EC%8B%A0%EC%84%B8%EA%B3%84%EC%9D%B8%ED%84%B0%EB%82%B4%EC%85%94%EB%82%A0_%EB%B3%B8%EB%AC%B81.png'}
-              title="동양미래대 축제"
-              onPress={handleNavigateToWaitingList}
-            />
-            <Card
-              imageSource={'https://www.shinsegaegroupnewsroom.com/wp-content/uploads/2021/10/%EC%8B%A0%EC%84%B8%EA%B3%84%EC%9D%B8%ED%84%B0%EB%82%B4%EC%85%94%EB%82%A0_%EB%B3%B8%EB%AC%B81.png'}
-              title="동양미래대 학식"
-              onPress={handleNavigateToWaitingList}
-            />
-          </View>
+          <ScrollView horizontal style={styles.horizontalScrollView} showsHorizontalScrollIndicator={false}>
+            {hostSessions.map((session) => {
+              let imageUrl = 'https://via.placeholder.com/150'; // 기본 대체 이미지 URL
+              console.log('Original session.imgUrl:', session.imgUrl); // 디버깅을 위한 로그 추가
+              if (session.imgUrl) {
+                if (session.imgUrl.startsWith('http://')) {
+                  // http로 시작하면 https로 강제 변경
+                  imageUrl = `https://${session.imgUrl.substring(7)}`;
+                } else if (session.imgUrl.startsWith('https://')) {
+                  imageUrl = session.imgUrl;
+                } else {
+                  // 상대 경로의 경우 API_BASE_URL에 직접 연결
+                  imageUrl = `${API_BASE_URL}${session.imgUrl}`;
+                }
+              }
+              console.log('Final imageUrl:', imageUrl); // 디버깅을 위한 로그 추가
+              return (
+                <Card
+                  key={session.hostId}
+                  imageSource={imageUrl}
+                  title={session.hostName}
+                  onPress={handleNavigateToWaitingList}
+                />
+              );
+            })}
+          </ScrollView>
 
         </View>
       </ScrollView>
@@ -112,6 +180,22 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#ffebee',
+    padding: 20,
+    margin: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ef9a9a',
   },
   tabContainer: {
     height: 60,
@@ -142,6 +226,9 @@ const styles = StyleSheet.create({
   horizontalContainer: {
     flexDirection: 'row',
     marginTop: 12,
+  },
+  horizontalScrollView: {
+    paddingBottom: 10,
   },
   card: {
     width: 160,

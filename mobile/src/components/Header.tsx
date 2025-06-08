@@ -21,27 +21,34 @@ export const Header: React.FC = () => {
 
         // parentNavigation이 존재하는 경우에만 리스너를 추가합니다.
         if (parentNavigation) {
+            console.log('Parent navigation found:', parentNavigation);
             const unsubscribe = parentNavigation.addListener('state', () => {
                 // 부모 네비게이터의 현재 상태를 가져옵니다.
                 // NavigationState를 사용하여 타입을 명확히 합니다.
                 const parentState: NavigationState | undefined = parentNavigation.getState(); 
+                console.log('Parent navigation state changed:', parentState);
 
                 if (parentState && parentState.type === 'tab' && parentState.routes[parentState.index]) {
                     const currentRouteName = parentState.routes[parentState.index].name;
+                    console.log('Current route name:', currentRouteName);
 
                     // 이제 currentRouteName은 TabParamList의 키로 올바르게 추론됩니다.
                     switch (currentRouteName) {
                         case 'Home':
                             setActiveTab('홈');
+                            console.log('Active tab set to: 홈');
                             break;
                         case 'Stoplist':
                             setActiveTab('대기 목록');
+                            console.log('Active tab set to: 대기 목록');
                             break;
                         case 'Notice':
                             setActiveTab('공지사항');
+                            console.log('Active tab set to: 공지사항');
                             break;
                         case 'HostRegister':
                             setActiveTab('호스트 등록');
+                            console.log('Active tab set to: 호스트 등록');
                             break;
                     }
                 }
@@ -52,7 +59,6 @@ export const Header: React.FC = () => {
     }, [navigation]); // navigation 객체가 변경될 때 리스너를 다시 등록합니다.
 
     const handleTabPress = (tabName: string) => {
-        setActiveTab(tabName);
         switch (tabName) {
             case '홈':
                 navigation.navigate('Home');
