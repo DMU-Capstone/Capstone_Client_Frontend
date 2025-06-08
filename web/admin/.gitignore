@@ -36,4 +36,4 @@ pnpm-debug.log*
 # OS 관련 불필요한 파일
 Thumbs.db
 
-/package-lock
+/package-lock.json
