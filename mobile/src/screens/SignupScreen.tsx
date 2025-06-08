@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Button, Text, TouchableOpacity } from 'react-native';
 import InputField from '../components/InputField';
-import axios from 'axios';
-import { Alert } from 'react-native';
 
-import { handleSignup } from '@shared/api/auth/Signup';
+import { handleSignup, handleSendAuthCode, handleVerifyAuthCode } from '@shared/api/auth/Signup';
+
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/StackNavigator';
 
 
-
-
+type SignupScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'LoginScreen'>;
 export const SignupScreen: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
@@ -18,13 +19,8 @@ export const SignupScreen: React.FC = () => {
   const [authRequested, setAuthRequested] = useState(false);
   const [authCode, setAuthCode] = useState('');
 
+  const navigation = useNavigation<SignupScreenNavigationProp>();
 
-
-  const handleSendAuthCode = () => {
-    // 서버 요청 로직 추가 필요
-    console.log(`인증번호 발급 요청: ${phoneNumber}`);
-    setAuthRequested(true);
-  };
 
   const handleGenderSelect = (value: string) => {
     setGender(value);
@@ -41,40 +37,6 @@ export const SignupScreen: React.FC = () => {
 
 
 
-  const handleSignup = async () => {
-    try {
-      const response = await axios.post('http://134.185.99.89:8080/join', {
-        name,
-        nickName,
-        password,
-        phoneNumber,
-        gender: gender === '남' ? 'MALE' : 'FEMALE',
-      });
-  
-      console.log('응답 상태 코드:', response.status);
-      
-      if (response.status === 201) {
-        const {name} = response.data;
-        console.log("응답 상태 코드:", response.status);
-        Alert.alert('회원가입 성공', `${name}님`);
-        // 여기서 원하면 로그인 페이지로 이동 가능
-  
-      }
-    } catch (error: any) {
-      if (error.response) {
-        const status = error.response.status;
-        if (status === 400) {
-          Alert.alert('입력 오류', '입력값을 다시 확인해주세요.');
-        } else if (status === 409) {
-          Alert.alert('중복된 아이디', '이미 존재하는 닉네임입니다.');
-        } else {
-          Alert.alert('오류 발생', '다시 시도해주세요.');
-        }
-      } else {
-        Alert.alert('서버 연결 실패', '네트워크를 확인해주세요.');
-      }
-    }
-  };
 
 
   return (
@@ -92,21 +54,37 @@ export const SignupScreen: React.FC = () => {
             keyboardType="phone-pad"
           />
         </View>
-        <TouchableOpacity style={styles.authButton} onPress={handleSendAuthCode}>
+        <TouchableOpacity
+          style={styles.authButton}
+          onPress={() => handleSendAuthCode(phoneNumber, () => setAuthRequested(true))}
+        >
           <Text style={styles.authButtonText}>인증번호 발급</Text>
         </TouchableOpacity>
+
       </View>
 
 
       {authRequested && (
-        <InputField
-          label="인증번호"
-          placeholder="123456"
-          value={authCode}
-          onChangeText={setAuthCode}
-          keyboardType="phone-pad"
-        />
-      )}  
+        <>
+          <InputField
+            label="인증번호"
+            placeholder="123456"
+            value={authCode}
+            onChangeText={setAuthCode}
+            keyboardType="phone-pad"
+          />
+          <TouchableOpacity
+            style={styles.verifyButton}
+            onPress={() =>
+              handleVerifyAuthCode(phoneNumber, authCode, () => {
+                // 인증 성공 후 로직 (예: 버튼 활성화 등)
+              })
+            }
+          >
+            <Text style={styles.verifyText}>인증 확인</Text>
+          </TouchableOpacity>
+        </>
+      )}
 
       <InputField
         label="비밀번호"
@@ -153,7 +131,23 @@ export const SignupScreen: React.FC = () => {
       </View>
 
       <View style={styles.button}>
-        <Button title="확인" color="#4B6EF6" onPress={handleSignup} />
+        <Button
+          title="확인"
+          color="#4B6EF6"
+          onPress={() =>
+            handleSignup({
+              name,
+              nickName,
+              password,
+              phoneNumber,
+              gender,
+            }).then((res) => {
+              if (res) {
+                navigation.navigate('LoginScreen');
+              }
+            })
+          }
+        />
       </View>
     </View>
   );
@@ -181,7 +175,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 12,
-    
+
     justifyContent: 'center',
   },
   authButtonText: {
@@ -224,5 +218,19 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
   },
+ 
+verifyButton: {
+  backgroundColor: '#4B6EF6',
+  paddingVertical: 10,
+  paddingHorizontal: 14,
+  borderRadius: 6,
+  justifyContent: 'center',
+  alignItems: 'center',
+},
 
+verifyText: {
+  color: 'white',
+  fontWeight: 'bold',
+  fontSize: 13,
+},
 });
