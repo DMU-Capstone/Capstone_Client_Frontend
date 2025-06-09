@@ -2,21 +2,16 @@ import React, { useState, useEffect } from "react";
 import { View, Text, Image, StyleSheet, Dimensions, SafeAreaView, TouchableOpacity } from "react-native";
 import { StatusBar } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/StackNavigator';
+import { getHostDetail, HostDetail, API_BASE_URL } from '../services/hostApi';
 
 const { width } = Dimensions.get("window");
 
 interface Facility {
     name: string;
 }
-
-const images: string[] = [
-    "https://interiorbay.net/design/upload_file/BD38940/8f5398862f704318e607b1f31b60bf4d_50881_1.jpg",
-    "https://pds.joongang.co.kr/news/component/htmlphoto_mmdata/202404/17/3fb9f3d4-da14-41d2-967b-1a7f8bbcee51.jpg",
-    "https://lh4.googleusercontent.com/proxy/lOBFj8gX5YU5OVVr3oM0MPUH2qZIs27aHbnMckwy9awQ0mqI-u6zW9j9ir4dNpHfBX4XQSWmv_vys5--qFDM6jUJjoZu2aww3vas-dMetTwpB1unIS0wD6qjqQ",
-];
 
 const facilities: Facility[] = [
     { name: "주차장" },
@@ -25,9 +20,63 @@ const facilities: Facility[] = [
     { name: "예약" }
 ];
 
-export const WaitingListScreen: React.FC = () => {
-    type WaitingListScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'WaitingListScreen'>;
-    const navigation = useNavigation<WaitingListScreenNavigationProp>();
+type StorDetailScreenRouteProp = NativeStackScreenProps<RootStackParamList, 'StorDetailScreen'>['route'];
+
+export const StorDetailScreen: React.FC = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+    const route = useRoute<StorDetailScreenRouteProp>();
+    const { hostId } = route.params;
+
+    const [hostDetail, setHostDetail] = useState<HostDetail | null>(null);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchHostDetail = async () => {
+            try {
+                const data = await getHostDetail(hostId);
+                setHostDetail(data);
+                console.log("Fetched Host Detail:", data);
+            } catch (err) {
+                setError('호스트 상세 정보를 불러오는 데 실패했습니다.');
+                console.error("Error fetching host detail:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (hostId) {
+            fetchHostDetail();
+        }
+    }, [hostId]);
+
+    if (loading) {
+        return (
+            <SafeAreaView style={styles.loadingContainer}>
+                <Text>상세 정보를 불러오는 중...</Text>
+            </SafeAreaView>
+        );
+    }
+
+    if (error) {
+        return (
+            <SafeAreaView style={styles.errorContainer}>
+                <Text>{error}</Text>
+            </SafeAreaView>
+        );
+    }
+
+    if (!hostDetail) {
+        return (
+            <SafeAreaView style={styles.errorContainer}>
+                <Text>데이터를 찾을 수 없습니다.</Text>
+            </SafeAreaView>
+        );
+    }
+
+    const carouselImages = hostDetail.imgUrl ? [hostDetail.imgUrl] : ["https://via.placeholder.com/400"];
+
+    const dynamicFacilities = hostDetail.keyword ? hostDetail.keyword.split(', ').map(name => ({ name })) : [];
 
     return (
         <SafeAreaView style={styles.container}>
@@ -39,7 +88,7 @@ export const WaitingListScreen: React.FC = () => {
                     height={200}
                     autoPlay={true}
                     autoPlayInterval={3000}
-                    data={images}
+                    data={carouselImages}
                     scrollAnimationDuration={1000}
                     renderItem={({ item }) => (
                         <Image source={{ uri: item }} style={styles.image} />
@@ -49,19 +98,19 @@ export const WaitingListScreen: React.FC = () => {
 
             {/* 헬스장 정보 */}
             <View style={styles.card}>
-                <Text style={styles.title}>영등포 에이블짐</Text>
-                <Text style={styles.subtitle}>혼자가 아닌 함께 성장할 수 있는 곳, 에이블짐...</Text>
+                <Text style={styles.title}>{hostDetail.hostName}</Text>
+                <Text style={styles.subtitle}>{hostDetail.description}</Text>
                 <View style={styles.infoRow}>
-                    <Text style={styles.infoText}>영등포역 5번 출구에서 112m</Text>
+                    <Text style={styles.infoText}>{`최대 인원: ${hostDetail.maxPeople}명`}</Text>
                 </View>
                 <View style={styles.infoRow}>
-                    <Text style={styles.infoText}>06:00 ~ 24:00</Text>
+                    <Text style={styles.infoText}>{`운영 시간: ${hostDetail.startTime} ~ ${hostDetail.endTime}`}</Text>
                 </View>
                 <View style={styles.infoRow}>
-                    <Text style={styles.infoText}>프리웨이트존, 유산소존, 스쿼트랙</Text>
+                    <Text style={styles.infoText}>{`연락처: ${hostDetail.hostPhoneNumber}`}</Text>
                 </View>
                 <View style={styles.infoRow}>
-                    <Text style={styles.infoText}>샤워실, 사우나 </Text>
+                    <Text style={styles.infoText}>{`관리자: ${hostDetail.hostManagerName}`}</Text>
                 </View>
             </View>
 
@@ -69,11 +118,15 @@ export const WaitingListScreen: React.FC = () => {
             <View style={styles.facilityContainer}>
                 <Text style={[styles.title, { paddingBottom: 20 }]}>편의시설</Text>
                 <View style={styles.facilityRow}>
-                    {facilities.map((item, index) => (
-                        <View key={index} style={styles.facilityItem}>
-                            <Text style={styles.facilityText}>{item.name}</Text>
-                        </View>
-                    ))}
+                    {dynamicFacilities.length > 0 ? (
+                        dynamicFacilities.map((item, index) => (
+                            <View key={index} style={styles.facilityItem}>
+                                <Text style={styles.facilityText}>{item.name}</Text>
+                            </View>
+                        ))
+                    ) : (
+                        <Text>편의시설 정보 없음</Text>
+                    )}
                 </View>
             </View>
 
@@ -137,5 +190,21 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontSize: 18,
         fontWeight: 'bold',
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    errorContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#ffebee',
+        padding: 20,
+        margin: 20,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#ef9a9a',
     },
 });

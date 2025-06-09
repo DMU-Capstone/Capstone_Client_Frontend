@@ -10,7 +10,19 @@ const showAlert = (title, message) => {
   }
 };
 
-// ✅ 올바른 로그인 처리 함수
+/**
+ * @typedef {Object} LoginResponse
+ * @property {string} token - The access token.
+ * @property {string} name - The user's name.
+ */
+
+/**
+ * Handles user login.
+ * @param {Object} credentials - The user's login credentials.
+ * @param {string} credentials.username - The username.
+ * @param {string} credentials.password - The password.
+ * @returns {Promise<LoginResponse|null>} A promise that resolves with the login response data on success, or null on failure.
+ */
 export const handleLogin = async ({ username, password }) => {
   try {
     const response = await axios.post('http://134.185.99.89:8080/login', {
@@ -27,9 +39,17 @@ export const handleLogin = async ({ username, password }) => {
 
     if (response.status === 200) {
       const { name } = response.data;
+      const authToken = response.headers.authorization;
+      let token = null;
+      if (authToken && authToken.startsWith('Bearer ')) {
+        token = authToken.substring(7);
+      }
+
       showAlert('로그인 성공', `${name}님`);
+      return { name, token };
     } else {
       showAlert('로그인 실패', `응답 코드: ${response.status}`);
+      return null;
     }
   } catch (error) {
     if (error.response) {
@@ -44,5 +64,6 @@ export const handleLogin = async ({ username, password }) => {
     } else {
       showAlert('서버 연결 실패', '네트워크를 확인해주세요.');
     }
+    throw error;
   }
 };

@@ -7,7 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/StackNavigator';
@@ -15,7 +15,6 @@ import * as WebBrowser from 'expo-web-browser';
 import { handleLogin } from '@shared/api/auth/Login';
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'LoginScreen'>;
-
 
 export const LoginScreen: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -41,14 +40,24 @@ export const LoginScreen: React.FC = () => {
     return `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}-${onlyNums.slice(7, 11)}`;
   };
 
-
-  const onPressLogin = () => {
-    handleLogin({ username, password });
+  const onPressLogin = async () => {
+    try {
+      const response = await handleLogin({ username, password });
+      if (response && response.token) {
+        await AsyncStorage.setItem('userToken', response.token);
+        console.log('User token saved:', response.token);
+        navigation.navigate('HomeScreen');
+      } else {
+        console.log('Login failed or no token received.');
+        alert('로그인 실패: 사용자 이름 또는 비밀번호를 확인하세요.');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('로그인 중 오류가 발생했습니다. 네트워크 상태를 확인하거나 잠시 후 다시 시도해주세요.');
+    }
   };
 
-
   return (
-
     <View style={styles.container}>
       <View>
         <Text style={styles.logo}>
@@ -73,7 +82,7 @@ export const LoginScreen: React.FC = () => {
         style={styles.input}
       />
 
-      <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('HomeScreen')}>
+      <TouchableOpacity style={styles.loginButton} onPress={onPressLogin}>
         <Text style={styles.loginText}>로그인</Text>
       </TouchableOpacity>
 
@@ -87,7 +96,6 @@ export const LoginScreen: React.FC = () => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 30, justifyContent: 'center', backgroundColor: '#fff' },

@@ -13,25 +13,21 @@ import { getAllHostSessions, HostSession, API_BASE_URL } from '../../services/ho
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-export const HomeScreen: React.FC = () => {
+export const HomeScreen: React.FC = () =>  {
   console.log('HomeScreen rendered'); // 컴포넌트 렌더링 확인 로그
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const [hostSessions, setHostSessions] = useState<HostSession[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  console.log('Loading state:', loading); // 로딩 상태 확인 로그
-  console.log('Error state:', error);   // 에러 상태 확인 로그
-
   useEffect(() => {
     const fetchHostSessions = async () => {
       try {
         const data = await getAllHostSessions();
-        console.log('Fetched host sessions data:', data); // 데이터 확인을 위한 로그 추가
         setHostSessions(data);
       } catch (err) {
         setError('호스트 세션을 불러오는 데 실패했습니다.');
-        console.error('Error fetching host sessions:', err); // 오류 디버깅을 위한 로그 강화
+        console.error('Error fetching host sessions:', err);
       } finally {
         setLoading(false);
       }
@@ -41,11 +37,10 @@ export const HomeScreen: React.FC = () => {
   }, []);
 
   const handleNavigateToWaitingList = () => {
-    navigation.navigate('WaitingListScreen');
+    navigation.navigate('StorDetailScreen');
   };
 
   if (loading) {
-    console.log('Displaying loading message'); // 로딩 메시지 표시 확인 로그
     return (
       <View style={styles.loadingContainer}>
         <Text>데이터를 불러오는 중...</Text>
@@ -54,7 +49,6 @@ export const HomeScreen: React.FC = () => {
   }
 
   if (error) {
-    console.log('Displaying error message:', error); // 에러 메시지 표시 확인 로그
     return (
       <View style={styles.errorContainer}>
         <Text>{error}</Text>
@@ -84,7 +78,7 @@ export const HomeScreen: React.FC = () => {
 
           <ScrollView horizontal style={styles.horizontalScrollView} showsHorizontalScrollIndicator={false}>
             {hostSessions.map((session) => {
-              let imageUrl = 'https://via.placeholder.com/150'; 
+              let imageUrl = 'https://www.noblesse.com/shop/data/m/editor_new/2024/10/04/4307ea0d8f60886cimage1.jpg'; 
               if (session.imgUrl) {
                 if (session.imgUrl.startsWith('http://')) {
                   
@@ -95,13 +89,12 @@ export const HomeScreen: React.FC = () => {
                   imageUrl = `${API_BASE_URL}${session.imgUrl}`;
                 }
               }
-              console.log('Final imageUrl:', imageUrl); // 디버깅을 위한 로그 추가
               return (
                 <Card
                   key={session.hostId}
                   imageSource={imageUrl}
                   title={session.hostName}
-                  onPress={handleNavigateToWaitingList}
+                  onPress={() => navigation.navigate('StorDetailScreen', { hostId: session.hostId })}
                 />
               );
             })}
@@ -141,7 +134,7 @@ export const HomeScreen: React.FC = () => {
 
           <ScrollView horizontal style={styles.horizontalScrollView} showsHorizontalScrollIndicator={false}>
             {hostSessions.map((session) => {
-              let imageUrl = 'https://via.placeholder.com/150'; // 기본 대체 이미지 URL
+              let imageUrl = 'https://www.noblesse.com/shop/data/m/editor_new/2024/10/04/4307ea0d8f60886cimage1.jpg'; // 기본 대체 이미지 URL
               console.log('Original session.imgUrl:', session.imgUrl); // 디버깅을 위한 로그 추가
               if (session.imgUrl) {
                 if (session.imgUrl.startsWith('http://')) {
@@ -160,7 +153,7 @@ export const HomeScreen: React.FC = () => {
                   key={session.hostId}
                   imageSource={imageUrl}
                   title={session.hostName}
-                  onPress={handleNavigateToWaitingList}
+                  onPress={() => navigation.navigate('StorDetailScreen', { hostId: session.hostId })}
                 />
               );
             })}
@@ -228,6 +221,7 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   horizontalScrollView: {
+    marginTop: 10,
     paddingBottom: 10,
   },
   card: {
