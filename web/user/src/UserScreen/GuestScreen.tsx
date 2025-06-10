@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Container, Form, Button } from 'react-bootstrap';
-import GuestService from '../Service/GuestService';
+import GuestService, { getQueueDetail } from '../Service/GuestService';
+import axios from 'axios';
+import { data } from 'react-router-dom';
 
+interface ActiveQueue {
+  id: number;
+  name: string;
+  count: number;
+};
 
 type FormData = {
   phoneNumber: string;
@@ -24,7 +31,7 @@ const schema = yup.object().shape({
     .min(1, '최소 1명 이상이어야 합니다.')
     .required('인원수는 필수입니다.'),
 });
-
+/*
 const handleQueueSubmit = async (formData: { phoneNumber: string; name: string; peopleCount: number }) => {
   try {
     const response = await GuestService.joinQueue('123', {
@@ -37,7 +44,7 @@ const handleQueueSubmit = async (formData: { phoneNumber: string; name: string; 
     console.error('❌ 대기열 등록 실패:', err);
   }
 };
-
+*/
 export default function QueueRegisterPage() {
   const {
     register,
@@ -47,9 +54,61 @@ export default function QueueRegisterPage() {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log('전송할 데이터:', data);
-    // 여기에 API 연동하면 됨
+  //활성화 큐 임시코드
+  const [activeHosts, setActiveHosts] = useState<ActiveQueue[]>([]);
+  const [activeHostId, setActiveHostId] = useState<number | null>(null);
+  useEffect(() => {
+      const fetchActiveHosts = async () => {
+        try {
+          const { getActiveQueues } = GuestService;
+          const activeList = await getActiveQueues();
+          const result: ActiveQueue[] = [];
+
+          for (const queue of activeList) {
+            const details = await getQueueDetail(queue.id);
+            const total = details.reduce((sum: number, item: { count: number }) => sum + item.count, 0);
+            result.push({ id: queue.id, name: queue.name, count: total });
+          }
+
+          setActiveHosts(result);
+          if (result.length > 0) {
+            setActiveHostId(result[0].id);
+          } else {
+            setActiveHostId(null);
+            alert('현재 활성화된 대기열이 없습니다.');
+          }
+        } catch (err) {
+          console.error('활성 큐 목록 불러오기 실패', err);
+        }
+      };
+      fetchActiveHosts();
+    }, []);
+
+  const onSubmit = async (formData: FormData) => {
+    if (!activeHostId) {
+      alert("현재 등록 가능한 대기열이 없습니다.");
+      return;
+    }
+    try {
+      const response = await GuestService.joinQueue(String(activeHostId), {
+        phoneNumber: formData.phoneNumber,
+        name: formData.name,
+        count: formData.peopleCount,
+      });
+      console.log('전송할 데이터:', response);
+      alert(`대기열 등록 완료! 대기코드: ${response.index}`);
+
+      const details = await getQueueDetail(activeHostId);
+      const updatedCount = details.reduce((sum, item) => sum + item.count, 0);
+      setActiveHosts(prev =>
+        prev.map(q =>
+          q.id === activeHostId ? { ...q, count: updatedCount } : q
+        )
+      );
+    } catch (err) {
+      console.log('대기열 등록 실패:', err);
+      alert('대기열 등록에 실패했습니다.');
+    }
   };
 
   return (
@@ -60,7 +119,23 @@ export default function QueueRegisterPage() {
         </Button>
         <h5 className="fw-bold mb-4">대기열에 등록하기 위한 정보를 입력해주세요.</h5>
 
-        <Form onSubmit={handleSubmit(handleQueueSubmit)}>
+        <Form onSubmit={handleSubmit(onSubmit)}>
+          <Form.Group className="mb-3">
+            <Form.Label>참여할 대기열 선택</Form.Label>
+            <Form.Select 
+              onChange={(e) => setActiveHostId(Number(e.target.value))} 
+              disabled={activeHosts.length === 0}
+              value={activeHostId ?? ''}
+            >
+              {activeHosts.length === 0 ? (
+                <option disabled value="">현재 활성화된 대기열이 없습니다</option>
+              ) : (
+                activeHosts.map((host) => (
+                  <option key={host.id} value={host.id}>{host.name} (대기 {host.count}명)</option>
+                ))
+              )}
+            </Form.Select>
+          </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>휴대폰 번호</Form.Label>
             <Form.Control type="text" placeholder="010-1111-1111" {...register('phoneNumber')} />
@@ -79,10 +154,11 @@ export default function QueueRegisterPage() {
             <Form.Text className="text-danger">{errors.peopleCount?.message}</Form.Text>
           </Form.Group>
 
-          <Button type="submit" variant="primary" className="w-100">
+          <Button type="submit" variant="primary" className="w-100" disabled={!activeHostId || activeHosts.length === 0}>
             확인
           </Button>
         </Form>
+        
       </div>
     </Container>
   );

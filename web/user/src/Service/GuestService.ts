@@ -11,6 +11,13 @@ interface JoinQueueResponse {
   index: string;
 }
 
+//활성화 큐 불러오는 임시 코드
+export interface ActiveHost {
+  id: number;
+  name: string;
+  count: number;
+}
+
 const GuestService = {
   /**
    * 대기열에 게스트 등록 (호스트 ID 기반)
@@ -26,6 +33,22 @@ const GuestService = {
     });
     return response.data;
   },
+
+  //활성화 큐 임시 코드
+  getActiveQueues: async (): Promise<ActiveHost[]> => {
+    const response = await api.get<any[]>('/admin/active');
+    const mapped: ActiveHost[] =  response.data.map(item => ({
+      id: item.id,
+      name: item.name,
+      count: item.count ?? 0,
+    }));
+    return mapped;
+  }
 };
+
+export const getQueueDetail = async (hostId: number): Promise<{ count: number }[]> => {
+  const res = await api.get(`/admin/active/${hostId}`);
+  return res.data;
+}
 
 export default GuestService;
