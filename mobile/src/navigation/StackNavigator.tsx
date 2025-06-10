@@ -9,6 +9,7 @@ import { BottomTabNavigator } from './BottomTabNavigator';
 import { StorDetailScreen } from '../screens/StoreDetailScreen';
 import { WaitingNumScreen } from '../screens/WaitingList/WaitingNumScreen';
 
+
 export type RootStackParamList = {
   SplashScreen: undefined;
   MainTabs: undefined;
@@ -51,21 +52,12 @@ const StackNavigator = () => {
   }
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {isLoggedIn ? (
-        // 로그인된 사용자 스택
-        <Stack.Group>
-          <Stack.Screen name="MainTabs" component={BottomTabNavigator} />
-          <Stack.Screen name="StorDetailScreen" component={StorDetailScreen} />
-          <Stack.Screen name="WaitingNumScreen" component={WaitingNumScreen} />
-        </Stack.Group>
-      ) : (
-        // 로그인되지 않은 사용자 스택
-        <Stack.Group>
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen name="SignupScreen" component={SignupScreen} />
-        </Stack.Group>
-      )}
+    <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName={isLoggedIn ? 'MainTabs' : 'LoginScreen'}>
+      <Stack.Screen name="LoginScreen" component={LoginScreen} />
+      <Stack.Screen name="SignupScreen" component={SignupScreen} />
+      <Stack.Screen name="MainTabs" component={BottomTabNavigator} />
+      <Stack.Screen name="StorDetailScreen" component={StorDetailScreen} />
+      <Stack.Screen name="WaitingNumScreen" component={WaitingNumScreen} />
     </Stack.Navigator>
   );
 };

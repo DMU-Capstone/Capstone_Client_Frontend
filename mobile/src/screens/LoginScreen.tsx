@@ -45,8 +45,12 @@ export const LoginScreen: React.FC = () => {
       const response = await handleLogin({ username, password });
       if (response && response.token) {
         await AsyncStorage.setItem('userToken', response.token);
+        if (response.userId) {
+          await AsyncStorage.setItem('userId', response.userId);
+          console.log('User ID saved:', response.userId);
+        }
         console.log('User token saved:', response.token);
-        navigation.navigate('HomeScreen');
+        navigation.navigate('MainTabs');
       } else {
         console.log('Login failed or no token received.');
         alert('로그인 실패: 사용자 이름 또는 비밀번호를 확인하세요.');

@@ -14,6 +14,7 @@ const showAlert = (title, message) => {
  * @typedef {Object} LoginResponse
  * @property {string} token - The access token.
  * @property {string} name - The user's name.
+ * @property {string} userId - The user's ID.
  */
 
 /**
@@ -38,7 +39,7 @@ export const handleLogin = async ({ username, password }) => {
     console.log('응답 상태 코드:', response.status);
 
     if (response.status === 200) {
-      const { name } = response.data;
+      const { name, user_id } = response.data;
       const authToken = response.headers.authorization;
       let token = null;
       if (authToken && authToken.startsWith('Bearer ')) {
@@ -46,7 +47,7 @@ export const handleLogin = async ({ username, password }) => {
       }
 
       showAlert('로그인 성공', `${name}님`);
-      return { name, token };
+      return { name, token, userId: user_id };
     } else {
       showAlert('로그인 실패', `응답 코드: ${response.status}`);
       return null;

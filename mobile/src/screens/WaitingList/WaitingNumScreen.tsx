@@ -1,12 +1,56 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Dimensions, TouchableOpacity } from 'react-native';
-
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Alert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 const { width } = Dimensions.get('window');
 
 export const WaitingNumScreen: React.FC = () => {
+    const navigation = useNavigation<NativeStackNavigationProp<any>>();
     const waitingNumber = 32; // 예시 대기번호
     const waitingCustomers = 1; // 예시 대기손님 수
-    const currentTime = '2025.06.02 22:59:30'; // 예시 현재 시간
+    const [currentTime, setCurrentTime] = useState<string>('');
+
+    useEffect(() => {
+        const updateTime = () => {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            setCurrentTime(`${year}.${month}.${day} ${hours}:${minutes}:${seconds}`);
+        };
+
+        // 초기 시간 설정
+        updateTime();
+
+        // 1초마다 시간 업데이트
+        const timer = setInterval(updateTime, 1000);
+
+        // 컴포넌트 언마운트 시 타이머 정리
+        return () => clearInterval(timer);
+    }, []);
+
+    const handleCancel = () => {
+        Alert.alert(
+            "번호표 취소",
+            "번호표가 취소되었습니다.",
+            [
+                {
+                    text: "확인",
+                    onPress: () => {
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'MainTabs' }],
+                        });
+                    }
+                }
+            ]
+        );
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -36,7 +80,7 @@ export const WaitingNumScreen: React.FC = () => {
             </View>
 
             <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.cancelButton}>
+                <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
                     <Text style={styles.cancelButtonText}>번호표 취소</Text>
                 </TouchableOpacity>
             </View>
@@ -52,9 +96,7 @@ const styles = StyleSheet.create({
         paddingTop: 20,
     },
     headerRight: {
-        position: 'absolute',
-        top: 20,
-        right: 20,
+     
     },
     timeText: {
         fontSize: 12,

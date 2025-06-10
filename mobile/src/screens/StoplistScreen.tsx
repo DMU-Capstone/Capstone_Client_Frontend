@@ -6,11 +6,12 @@ import {
 
 import { Header } from '../components/Header';
 import { CardTwo } from '../components/CardTwo';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 export const StoplistScreen: React.FC = () => {
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Header />
       <View style={styles.content}>
         <View style={styles.horizontalContainer}>
@@ -46,7 +47,7 @@ export const StoplistScreen: React.FC = () => {
           />
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
