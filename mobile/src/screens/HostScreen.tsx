@@ -6,7 +6,7 @@ import {
     TouchableOpacity,
     StyleSheet,
 } from 'react-native';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -24,8 +24,8 @@ export const HostScreen: React.FC = () => {
 
     return (
 
-        <View style={styles.container}>
-            <View>
+        <SafeAreaView style={styles.container}>
+            <SafeAreaView>
                 <Text style={styles.logo}>
                     <Text style={{ fontWeight: 'bold' }}>호스트 이름</Text>
                 </Text>
@@ -33,7 +33,7 @@ export const HostScreen: React.FC = () => {
                 <Text style={styles.tagline}>최대인원</Text>
                 <TextInput></TextInput>
                 <Text>대표자 이름</Text>
-            </View>
+            </SafeAreaView>
 
 
 
@@ -45,7 +45,7 @@ export const HostScreen: React.FC = () => {
                 <Text style={styles.signupText}>회원가입</Text>
             </TouchableOpacity>
 
-        </View>
+        </SafeAreaView>
     );
 };
 

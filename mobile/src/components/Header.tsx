@@ -5,11 +5,11 @@ import {
 } from 'react-native';
 import { useNavigation, NavigationState } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { MaterialTopTabNavigationProp } from '@react-navigation/material-top-tabs';
 import { RootStackParamList } from '../navigation/StackNavigator';
 import { TabParamList } from '../navigation/TopTabNavigator';
 
-type CombinedNavigationProp = NativeStackNavigationProp<RootStackParamList> & BottomTabNavigationProp<TabParamList>;
+type CombinedNavigationProp = NativeStackNavigationProp<RootStackParamList> & MaterialTopTabNavigationProp<TabParamList>;
 
 export const Header: React.FC = () => {
     const navigation = useNavigation<CombinedNavigationProp>();
@@ -17,7 +17,7 @@ export const Header: React.FC = () => {
 
     React.useEffect(() => {
         // 부모 탭 네비게이터를 가져옵니다.
-        const parentNavigation = navigation.getParent<BottomTabNavigationProp<TabParamList>>();
+        const parentNavigation = navigation.getParent<MaterialTopTabNavigationProp<TabParamList>>();
 
         // parentNavigation이 존재하는 경우에만 리스너를 추가합니다.
         if (parentNavigation) {
@@ -25,7 +25,7 @@ export const Header: React.FC = () => {
             const unsubscribe = parentNavigation.addListener('state', () => {
                 // 부모 네비게이터의 현재 상태를 가져옵니다.
                 // NavigationState를 사용하여 타입을 명확히 합니다.
-                const parentState: NavigationState | undefined = parentNavigation.getState(); 
+                const parentState: NavigationState | undefined = parentNavigation.getState();
                 console.log('Parent navigation state changed:', parentState);
 
                 if (parentState && parentState.type === 'tab' && parentState.routes[parentState.index]) {
@@ -36,19 +36,19 @@ export const Header: React.FC = () => {
                     switch (currentRouteName) {
                         case 'Home':
                             setActiveTab('홈');
-                            console.log('Active tab set to: 홈');
+                           
                             break;
                         case 'Stoplist':
                             setActiveTab('대기 목록');
-                            console.log('Active tab set to: 대기 목록');
+                            
                             break;
                         case 'Notice':
                             setActiveTab('공지사항');
-                            console.log('Active tab set to: 공지사항');
+                           
                             break;
                         case 'HostRegister':
                             setActiveTab('호스트 등록');
-                            console.log('Active tab set to: 호스트 등록');
+                           
                             break;
                     }
                 }

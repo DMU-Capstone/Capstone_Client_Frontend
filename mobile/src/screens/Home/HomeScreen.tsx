@@ -6,6 +6,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/StackNavigator';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Header } from '../../components/Header';
 import { Card } from '../../components/Card';
@@ -36,10 +37,6 @@ export const HomeScreen: React.FC = () =>  {
     fetchHostSessions();
   }, []);
 
-  const handleNavigateToWaitingList = () => {
-    navigation.navigate('StorDetailScreen');
-  };
-
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -57,13 +54,13 @@ export const HomeScreen: React.FC = () =>  {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ScrollView style={styles.scrollView}>
         <Header />
 
         <View style={styles.banner}>
           <Image
-            source={{ uri: 'https://www.fashionbiz.co.kr/images/etcImg/1734912608622-%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B7.jpg' }} 
+            source={{ uri: 'https://www.fashionbiz.co.kr/images/etcImg/1734912608622-%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B9%E3%84%B7.jpg' }} 
             style={styles.bannerImage}
             resizeMode="cover"
           />
@@ -73,7 +70,7 @@ export const HomeScreen: React.FC = () =>  {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>트렌드 줄서기 스팟</Text>
-            <TouchableOpacity onPress={handleNavigateToWaitingList}><Text> 전체보기 </Text></TouchableOpacity>
+            <TouchableOpacity><Text> 전체보기 </Text></TouchableOpacity>
           </View>
 
           <ScrollView horizontal style={styles.horizontalScrollView} showsHorizontalScrollIndicator={false}>
@@ -162,7 +159,7 @@ export const HomeScreen: React.FC = () =>  {
         </View>
       </ScrollView>
 
-    </View>
+    </SafeAreaView>
   );
 };
 
