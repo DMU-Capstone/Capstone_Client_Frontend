@@ -3,8 +3,12 @@
   "private": true,
   "packageManager": "yarn@4.6.0",
   "workspaces": [
-    "admin",
+    "web",
     "mobile",
     "package"
-  ]
+  ],
+  "dependencies": {
+    "@hookform/resolvers": "^5.0.1",
+    "yup": "^1.6.1"
+  }
 }

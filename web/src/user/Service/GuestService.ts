@@ -17,8 +17,12 @@ export interface ActiveHost {
   name: string;
   count: number;
 }
+export const getQueueDetail = async (hostId: number): Promise<{ count: number }[]> => {
+  const res = await api.get(`/admin/active/${hostId}`);
+  return res.data;
+};
 
-const GuestService = {
+export const GuestService = {
   /**
    * 대기열에 게스트 등록 (호스트 ID 기반)
    * @param id 호스트 ID 또는 Queue ID
@@ -43,12 +47,17 @@ const GuestService = {
       count: item.count ?? 0,
     }));
     return mapped;
-  }
+  },
+
+  cancelQueue: async (queueId: string, data: JoinQueueRequest): Promise<void> => {
+    await api.delete(`/queue/${queueId}`, { data });
+  },
+
+  delayQueue: async (queueId: string, data: JoinQueueRequest): Promise<void> => {
+    await api.post(`/queue/${queueId}/postpone`, data);
+  },
+
 };
 
-export const getQueueDetail = async (hostId: number): Promise<{ count: number }[]> => {
-  const res = await api.get(`/admin/active/${hostId}`);
-  return res.data;
-}
 
 export default GuestService;

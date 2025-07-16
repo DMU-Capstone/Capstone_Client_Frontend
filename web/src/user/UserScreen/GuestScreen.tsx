@@ -4,6 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { Container, Form, Button } from 'react-bootstrap';
 import GuestService, { getQueueDetail } from '../Service/GuestService';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { data } from 'react-router-dom';
 
@@ -54,14 +55,15 @@ export default function QueueRegisterPage() {
     resolver: yupResolver(schema),
   });
 
+  const navigate = useNavigate();
+
   //활성화 큐 임시코드
   const [activeHosts, setActiveHosts] = useState<ActiveQueue[]>([]);
   const [activeHostId, setActiveHostId] = useState<number | null>(null);
   useEffect(() => {
       const fetchActiveHosts = async () => {
         try {
-          const { getActiveQueues } = GuestService;
-          const activeList = await getActiveQueues();
+          const activeList = await GuestService.getActiveQueues();
           const result: ActiveQueue[] = [];
 
           for (const queue of activeList) {
@@ -97,6 +99,7 @@ export default function QueueRegisterPage() {
       });
       console.log('전송할 데이터:', response);
       alert(`대기열 등록 완료! 대기코드: ${response.index}`);
+      navigate(`/guest-queue?id=${activeHostId}&code=${response.index}`);
 
       const details = await getQueueDetail(activeHostId);
       const updatedCount = details.reduce((sum, item) => sum + item.count, 0);
