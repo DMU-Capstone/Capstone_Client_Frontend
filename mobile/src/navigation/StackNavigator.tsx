@@ -9,6 +9,7 @@ import { BottomTabNavigator } from './BottomTabNavigator';
 import { StorDetailScreen } from '../screens/StoreDetailScreen';
 import { WaitingNumScreen } from '../screens/WaitingList/WaitingNumScreen';
 
+
 export type RootStackParamList = {
   SplashScreen: undefined;
   MainTabs: undefined;

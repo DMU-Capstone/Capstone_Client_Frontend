@@ -57,16 +57,28 @@ export const HomeScreen: React.FC = () => {
         <Header />
 
         <View style={styles.banner}>
+<<<<<<< HEAD
           <Image source={{ uri: 'https://www.fashionbiz.co.kr/images/etcImg/1734912608622-%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B9%E3%84%B7.jpg' }} style={styles.bannerImage} resizeMode="cover" />
+=======
+          <Image
+            source={{ uri: 'https://www.fashionbiz.co.kr/images/etcImg/1734912608622-%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B9%E3%84%B7.jpg' }} 
+            style={styles.bannerImage}
+            resizeMode="cover"
+          />
+>>>>>>> cc6b75bd205c2fe764c5360d693723a6d2f174b7
         </View>
 
         {/* 인기 줄서기 스팟 */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>트렌드 줄서기 스팟</Text>
+<<<<<<< HEAD
             <TouchableOpacity>
               <Text> 전체보기 </Text>
             </TouchableOpacity>
+=======
+            <TouchableOpacity><Text> 전체보기 </Text></TouchableOpacity>
+>>>>>>> cc6b75bd205c2fe764c5360d693723a6d2f174b7
           </View>
 
           <ScrollView horizontal style={styles.horizontalScrollView} showsHorizontalScrollIndicator={false}>
@@ -140,6 +152,10 @@ export const HomeScreen: React.FC = () => {
           </ScrollView>
         </View>
       </ScrollView>
+<<<<<<< HEAD
+=======
+
+>>>>>>> cc6b75bd205c2fe764c5360d693723a6d2f174b7
     </SafeAreaView>
   );
 };

@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 interface RegisterQueueModalProps {
     open: boolean;
     onClose: () => void;
+    endedQueues: Queue[];
 }
 
 interface Queue {
