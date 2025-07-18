@@ -1,8 +1,6 @@
 // HomeScreen.tsx
 import React, { useState, useEffect } from 'react';
-import {
-  View, Text, StyleSheet, ScrollView, TouchableOpacity, Image
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/StackNavigator';
@@ -14,7 +12,7 @@ import { getAllHostSessions, HostSession, API_BASE_URL } from '../../services/ho
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-export const HomeScreen: React.FC = () =>  {
+export const HomeScreen: React.FC = () => {
   console.log('HomeScreen rendered'); // 컴포넌트 렌더링 확인 로그
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const [hostSessions, setHostSessions] = useState<HostSession[]>([]);
@@ -59,41 +57,31 @@ export const HomeScreen: React.FC = () =>  {
         <Header />
 
         <View style={styles.banner}>
-          <Image
-            source={{ uri: 'https://www.fashionbiz.co.kr/images/etcImg/1734912608622-%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B9%E3%84%B7.jpg' }} 
-            style={styles.bannerImage}
-            resizeMode="cover"
-          />
+          <Image source={{ uri: 'https://www.fashionbiz.co.kr/images/etcImg/1734912608622-%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B9%E3%84%B7%E3%84%B9%E3%84%B7.jpg' }} style={styles.bannerImage} resizeMode="cover" />
         </View>
 
         {/* 인기 줄서기 스팟 */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>트렌드 줄서기 스팟</Text>
-            <TouchableOpacity><Text> 전체보기 </Text></TouchableOpacity>
+            <TouchableOpacity>
+              <Text> 전체보기 </Text>
+            </TouchableOpacity>
           </View>
 
           <ScrollView horizontal style={styles.horizontalScrollView} showsHorizontalScrollIndicator={false}>
             {hostSessions.map((session) => {
-              let imageUrl = 'https://www.noblesse.com/shop/data/m/editor_new/2024/10/04/4307ea0d8f60886cimage1.jpg'; 
+              let imageUrl = 'https://www.noblesse.com/shop/data/m/editor_new/2024/10/04/4307ea0d8f60886cimage1.jpg';
               if (session.imgUrl) {
                 if (session.imgUrl.startsWith('http://')) {
-                  
                   imageUrl = `https://${session.imgUrl.substring(7)}`;
                 } else if (session.imgUrl.startsWith('https://')) {
                   imageUrl = session.imgUrl;
-                } else {    
+                } else {
                   imageUrl = `${API_BASE_URL}${session.imgUrl}`;
                 }
               }
-              return (
-                <Card
-                  key={session.hostId}
-                  imageSource={imageUrl}
-                  title={session.hostName}
-                  onPress={() => navigation.navigate('StorDetailScreen', { hostId: session.hostId })}
-                />
-              );
+              return <Card key={session.hostId} imageSource={imageUrl} title={session.hostName} onPress={() => navigation.navigate('StorDetailScreen', { hostId: session.hostId })} />;
             })}
           </ScrollView>
         </View>
@@ -110,7 +98,7 @@ export const HomeScreen: React.FC = () =>  {
               ['인천공항 대기열', '인하공전 축제부스'],
               ['헬스장 기구대기줄', '김포공항 대기열'],
               ['인천사랑병원', '동양미래대 학식'],
-              ['에버랜드', '금강']
+              ['에버랜드', '금강'],
             ].map((row, idx) => (
               <View key={idx} style={styles.rankRow}>
                 <Text style={styles.rankNum}>{idx + 1}</Text>
@@ -126,7 +114,9 @@ export const HomeScreen: React.FC = () =>  {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>내 주변 줄서기 스팟</Text>
-            <TouchableOpacity><Text> 전체보기 </Text></TouchableOpacity>
+            <TouchableOpacity>
+              <Text> 전체보기 </Text>
+            </TouchableOpacity>
           </View>
 
           <ScrollView horizontal style={styles.horizontalScrollView} showsHorizontalScrollIndicator={false}>
@@ -145,20 +135,11 @@ export const HomeScreen: React.FC = () =>  {
                 }
               }
               console.log('Final imageUrl:', imageUrl); // 디버깅을 위한 로그 추가
-              return (
-                <Card
-                  key={session.hostId}
-                  imageSource={imageUrl}
-                  title={session.hostName}
-                  onPress={() => navigation.navigate('StorDetailScreen', { hostId: session.hostId })}
-                />
-              );
+              return <Card key={session.hostId} imageSource={imageUrl} title={session.hostName} onPress={() => navigation.navigate('StorDetailScreen', { hostId: session.hostId })} />;
             })}
           </ScrollView>
-
         </View>
       </ScrollView>
-
     </SafeAreaView>
   );
 };
@@ -202,16 +183,16 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   section: {
-    padding: 16
+    padding: 16,
   },
   sectionHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 16
+    marginTop: 16,
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   horizontalContainer: {
     flexDirection: 'row',
@@ -228,22 +209,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     borderRadius: 10,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   rankWrapper: {
-    marginTop: 20
+    marginTop: 20,
   },
   rankRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 8
+    marginBottom: 8,
   },
   rankNum: {
     width: 20,
-    color: '#888'
+    color: '#888',
   },
   rankText: {
-    width: '40%'
+    width: '40%',
   },
 });
-

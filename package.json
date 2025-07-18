@@ -2,10 +2,15 @@
   "name": "capstone",
   "private": true,
   "packageManager": "yarn@4.6.0",
+  "scripts": {
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "format": "prettier --write ."
+  },
   "workspaces": [
-    "admin",
+    "web",
     "mobile",
-    "package"
+    "package/*",
+    "app"
   ],
   "dependencies": {
     "@expo/webpack-config": "^19.0.1",
@@ -29,6 +34,14 @@
   "devDependencies": {
     "@types/react": "^19.1.6",
     "@types/react-native": "^0.73.0",
-    "babel-preset-expo": "~13.0.0"
+    "@typescript-eslint/eslint-plugin": "^8.37.0",
+    "@typescript-eslint/parser": "^8.37.0",
+    "babel-preset-expo": "~13.0.0",
+    "eslint": "^9.31.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-native": "^5.0.0",
+    "prettier": "^3.6.2"
   }
 }

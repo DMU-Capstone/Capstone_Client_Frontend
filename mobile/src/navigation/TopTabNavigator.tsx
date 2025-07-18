@@ -15,8 +15,8 @@ export type TabParamList = {
 
 const Tab = createMaterialTopTabNavigator();
 
-export const TopTabNavigator = () => (
-  <Tab.Navigator>
+export const TopTabNavigator = () => (  
+<Tab.Navigator>
     <Tab.Screen name="Home" component={HomeScreen} />
     <Tab.Screen name="Stoplist" component={StoplistScreen} />
     <Tab.Screen name="Notice" component={NoticeScreen} />
