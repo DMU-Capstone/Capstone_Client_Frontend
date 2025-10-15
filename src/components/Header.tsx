@@ -54,10 +54,6 @@ export const Header: React.FC = () => {
               setActiveTab("대기 목록");
 
               break;
-            case "Notice":
-              setActiveTab("공지사항");
-
-              break;
             case "HostRegister":
               setActiveTab("호스트 등록");
 
@@ -78,9 +74,7 @@ export const Header: React.FC = () => {
       case "대기 목록":
         navigation.navigate("Stoplist");
         break;
-      case "공지사항":
-        navigation.navigate("Notice");
-        break;
+
       case "호스트 등록":
         navigation.navigate("HostRegister");
         break;

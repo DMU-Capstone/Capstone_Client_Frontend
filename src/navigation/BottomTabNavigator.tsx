@@ -2,7 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { HomeScreen } from "../screens/Home/HomeScreen";
-import { NoticeScreen } from "../screens/NoticeScreen";
+import { MapScreen } from "../screens/MapScreen";
 import { StoplistScreen } from "../screens/StoplistScreen";
 import { MyScreen } from "../screens/BottomScreen/MyScreen";
 
@@ -51,6 +51,20 @@ export const BottomTabNavigator = () => (
       }}
     />
     <Tab.Screen
+      name="Map"
+      component={MapScreen}
+      options={{
+        tabBarIcon: ({ focused, color, size }) => (
+          <Ionicons
+            name={focused ? "map" : "map-outline"}
+            size={24}
+            color={color}
+          />
+        ),
+        tabBarLabel: "주변 매장",
+      }}
+    />
+    <Tab.Screen
       name="List"
       component={StoplistScreen}
       options={{
@@ -64,20 +78,7 @@ export const BottomTabNavigator = () => (
         tabBarLabel: "목록",
       }}
     />
-    <Tab.Screen
-      name="Notice"
-      component={NoticeScreen}
-      options={{
-        tabBarIcon: ({ focused, color, size }) => (
-          <Ionicons
-            name={focused ? "notifications" : "notifications-outline"}
-            size={24}
-            color={color}
-          />
-        ),
-        tabBarLabel: "알림",
-      }}
-    />
+
     <Tab.Screen
       name="mypage"
       component={MyScreen}

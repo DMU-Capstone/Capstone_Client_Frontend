@@ -41,8 +41,6 @@
 			</dict>
 		</dict>
 	</dict>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
@@ -64,5 +62,6 @@
 		<string>FontAwesome6.ttf</string>
 		<string>Ionicons.ttf</string>
 	</array>
+
 </dict>
 </plist>
