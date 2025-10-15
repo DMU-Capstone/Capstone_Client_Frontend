@@ -5,13 +5,13 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from "react-native";
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/StackNavigator";
-import { handleLogin } from "../../package/shared/api/auth/Login";
+import { login } from "../apis/auth";
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -21,7 +21,6 @@ type LoginScreenNavigationProp = NativeStackNavigationProp<
 export const LoginScreen: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
   const navigation = useNavigation<LoginScreenNavigationProp>();
 
   const KAKAO_AUTH_URL =
@@ -31,7 +30,19 @@ export const LoginScreen: React.FC = () => {
     "&response_type=code";
 
   const handleKakaoLogin = async () => {
-    await WebBrowser.openBrowserAsync(KAKAO_AUTH_URL);
+    // WebBrowser import 필요
+    // await WebBrowser.openBrowserAsync(KAKAO_AUTH_URL);
+  };
+
+  const handleLogin = async () => {
+    try {
+      const response = await login({ username, password });
+      if (response && response.token) {
+        navigation.navigate("MainTabs");
+      }
+    } catch (error) {
+      Alert.alert("로그인 실패", "아이디 또는 비밀번호가 올바르지 않습니다.");
+    }
   };
 
   const formatPhoneNumber = (value: string) => {
@@ -45,27 +56,9 @@ export const LoginScreen: React.FC = () => {
     )}`;
   };
 
-  const onPressLogin = async () => {
-    try {
-      const response = await handleLogin({ username, password });
-      if (response && response.token) {
-        await AsyncStorage.setItem("userToken", response.token);
-        if (response.userId) {
-          await AsyncStorage.setItem("userId", response.userId);
-          console.log("User ID saved:", response.userId);
-        }
-        console.log("User token saved:", response.token);
-        navigation.navigate("MainTabs");
-      } else {
-        console.log("Login failed or no token received.");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-    }
-  };
-
   return (
     <View style={styles.container}>
+      <StatusBar barStyle={"dark-content"} />
       <View>
         <Text style={styles.logo}>
           <Text style={{ fontWeight: "bold" }}>Wait:</Text>It
@@ -89,14 +82,11 @@ export const LoginScreen: React.FC = () => {
         style={styles.input}
       />
 
-      <TouchableOpacity style={styles.loginButton} onPress={onPressLogin}>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginText}>로그인</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.signupButton}
-        onPress={() => navigation.navigate("SignupScreen")}
-      >
+      <TouchableOpacity style={styles.signupButton}>
         <Text style={styles.signupText}>회원가입</Text>
       </TouchableOpacity>
 
