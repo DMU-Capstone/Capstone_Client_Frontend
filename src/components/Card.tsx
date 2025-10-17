@@ -42,7 +42,6 @@ export const Card: React.FC<CardProps> = ({
         <Text style={styles.cardTitle}>{title}</Text>
         {isBookmarked && (
           <View style={styles.bookmarkIcon}>
-            {/* 여기는 아이콘 라이브러리(예: react-native-vector-icons)를 사용하면 더 예쁩니다. */}
             <Text>🔖</Text>
           </View>
         )}
