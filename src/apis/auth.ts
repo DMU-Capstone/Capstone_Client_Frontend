@@ -6,6 +6,7 @@ import {
   LoginResponse,
 } from "../types/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BASE_URL } from "@env";
 
 export const signup = async (request: SignupRequest) => {
   try {
@@ -28,7 +29,7 @@ export const signup = async (request: SignupRequest) => {
 export const login = async (request: LoginRequest) => {
   try {
     const response = await axios.post<LoginResponse>(
-      "http://134.185.99.89:8080/login",
+      `${BASE_URL}/login`,
       request,
       {
         headers: {

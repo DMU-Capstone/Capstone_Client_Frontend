@@ -1,4 +1,3 @@
-// HomeScreen.tsx
 import React, { useState, useEffect } from "react";
 import { StatusBar } from "react-native";
 import {
@@ -20,21 +19,20 @@ import { Header } from "../../components/Header";
 import { Card } from "../../components/Card";
 import { Footer } from "../../components/Footer";
 import {
-  getAllHostSessions,
   getBannerData,
-  HostSession,
   BannerData,
   API_BASE_URL,
 } from "../../services/hostApi";
+import { getStore } from "../../apis/store";
+import { Store } from "../../types/store";
 
 const { width: screenWidth } = Dimensions.get("window");
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export const HomeScreen: React.FC = () => {
-  console.log("HomeScreen rendered");
   const navigation = useNavigation<HomeScreenNavigationProp>();
-  const [hostSessions, setHostSessions] = useState<HostSession[]>([]);
+  const [stores, setStores] = useState<Store[]>([]);
   const [bannerData, setBannerData] = useState<BannerData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,19 +41,17 @@ export const HomeScreen: React.FC = () => {
     const fetchData = async () => {
       try {
         // 각 API를 독립적으로 처리하여 하나가 실패해도 다른 것은 계속 로드
-        const [hostSessionsResult, bannerDataResult] = await Promise.allSettled(
-          [getAllHostSessions(), getBannerData()]
-        );
+        const [storesResult, bannerDataResult] = await Promise.allSettled([
+          getStore(),
+          getBannerData(),
+        ]);
 
-        // 호스트 세션 데이터 처리
-        if (hostSessionsResult.status === "fulfilled") {
-          setHostSessions(hostSessionsResult.value);
+        // 스토어 데이터 처리
+        if (storesResult.status === "fulfilled") {
+          setStores(storesResult.value);
         } else {
-          console.error(
-            "호스트 세션 데이터 로드 실패:",
-            hostSessionsResult.reason
-          );
-          setHostSessions([]); // 빈 배열로 설정
+          console.error("스토어 데이터 로드 실패:", storesResult.reason);
+          setStores([]);
         }
 
         // 배너 데이터 처리
@@ -68,7 +64,7 @@ export const HomeScreen: React.FC = () => {
 
         // 둘 다 실패한 경우에만 에러 상태로 설정
         if (
-          hostSessionsResult.status === "rejected" &&
+          storesResult.status === "rejected" &&
           bannerDataResult.status === "rejected"
         ) {
           setError("데이터를 불러오는 데 실패했습니다.");
@@ -180,28 +176,28 @@ export const HomeScreen: React.FC = () => {
               style={styles.horizontalScrollView}
               showsHorizontalScrollIndicator={false}
             >
-              {hostSessions.map((session) => {
+              {stores.map((store) => {
                 let imageUrl =
                   "https://www.noblesse.com/shop/data/m/editor_new/2024/10/04/4307ea0d8f60886cimage1.jpg";
 
-                if (session.imgUrl && session.imgUrl.trim() !== "") {
-                  if (session.imgUrl.startsWith("http://")) {
-                    imageUrl = `https://${session.imgUrl.substring(7)}`;
-                  } else if (session.imgUrl.startsWith("https://")) {
-                    imageUrl = session.imgUrl;
+                if (store.imgUrl && store.imgUrl.trim() !== "") {
+                  if (store.imgUrl.startsWith("http://")) {
+                    imageUrl = `https://${store.imgUrl.substring(7)}`;
+                  } else if (store.imgUrl.startsWith("https://")) {
+                    imageUrl = store.imgUrl;
                   } else {
-                    imageUrl = `${API_BASE_URL}${session.imgUrl}`;
+                    imageUrl = `${API_BASE_URL}${store.imgUrl}`;
                   }
                 }
 
                 return (
                   <Card
-                    key={session.hostId}
+                    key={store.id}
                     imageSource={{ uri: imageUrl }}
-                    title={session.hostName}
+                    title={store.title}
                     onPress={() =>
                       navigation.navigate("StorDetailScreen", {
-                        hostId: session.hostId,
+                        hostId: store.id,
                       })
                     }
                   />
@@ -248,28 +244,28 @@ export const HomeScreen: React.FC = () => {
               style={styles.horizontalScrollView}
               showsHorizontalScrollIndicator={false}
             >
-              {hostSessions.map((session) => {
+              {stores.map((store) => {
                 let imageUrl =
                   "https://www.noblesse.com/shop/data/m/editor_new/2024/10/04/4307ea0d8f60886cimage1.jpg";
 
-                if (session.imgUrl && session.imgUrl.trim() !== "") {
-                  if (session.imgUrl.startsWith("http://")) {
-                    imageUrl = `https://${session.imgUrl.substring(7)}`;
-                  } else if (session.imgUrl.startsWith("https://")) {
-                    imageUrl = session.imgUrl;
+                if (store.imgUrl && store.imgUrl.trim() !== "") {
+                  if (store.imgUrl.startsWith("http://")) {
+                    imageUrl = `https://${store.imgUrl.substring(7)}`;
+                  } else if (store.imgUrl.startsWith("https://")) {
+                    imageUrl = store.imgUrl;
                   } else {
-                    imageUrl = `${API_BASE_URL}${session.imgUrl}`;
+                    imageUrl = `${API_BASE_URL}${store.imgUrl}`;
                   }
                 }
 
                 return (
                   <Card
-                    key={session.hostId}
+                    key={store.id}
                     imageSource={{ uri: imageUrl }}
-                    title={session.hostName}
+                    title={store.title}
                     onPress={() =>
                       navigation.navigate("StorDetailScreen", {
-                        hostId: session.hostId,
+                        hostId: store.id,
                       })
                     }
                   />
