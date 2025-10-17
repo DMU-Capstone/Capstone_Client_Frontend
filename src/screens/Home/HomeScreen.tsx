@@ -27,6 +27,7 @@ import { getStore } from "../../apis/store";
 import { Store } from "../../types/store";
 
 const { width: screenWidth } = Dimensions.get("window");
+
 type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export const HomeScreen: React.FC = () => {
@@ -175,6 +176,7 @@ export const HomeScreen: React.FC = () => {
               style={styles.horizontalScrollView}
               showsHorizontalScrollIndicator={false}
             >
+<<<<<<< HEAD
               {stores.map((store) => {
                 let imageUrl =
                   "https://www.noblesse.com/shop/data/m/editor_new/2024/10/04/4307ea0d8f60886cimage1.jpg";
@@ -186,17 +188,39 @@ export const HomeScreen: React.FC = () => {
                     imageUrl = store.imgUrl;
                   } else {
                     imageUrl = `${API_BASE_URL}${store.imgUrl}`;
+=======
+              {hostSessions.map((session) => {
+                let imageUrl =
+                  "https://www.noblesse.com/shop/data/m/editor_new/2024/10/04/4307ea0d8f60886cimage1.jpg";
+
+                if (session.imgUrl && session.imgUrl.trim() !== "") {
+                  if (session.imgUrl.startsWith("http://")) {
+                    imageUrl = `https://${session.imgUrl.substring(7)}`;
+                  } else if (session.imgUrl.startsWith("https://")) {
+                    imageUrl = session.imgUrl;
+                  } else {
+                    imageUrl = `${API_BASE_URL}${session.imgUrl}`;
+>>>>>>> origin/dev
                   }
                 }
 
                 return (
                   <Card
+<<<<<<< HEAD
                     key={store.id}
                     imageSource={{ uri: imageUrl }}
                     title={store.title}
                     onPress={() =>
                       navigation.navigate("StorDetailScreen", {
                         hostId: store.id,
+=======
+                    key={session.hostId}
+                    imageSource={{ uri: imageUrl }}
+                    title={session.hostName}
+                    onPress={() =>
+                      navigation.navigate("StorDetailScreen", {
+                        hostId: session.hostId,
+>>>>>>> origin/dev
                       })
                     }
                   />
@@ -243,6 +267,7 @@ export const HomeScreen: React.FC = () => {
               style={styles.horizontalScrollView}
               showsHorizontalScrollIndicator={false}
             >
+<<<<<<< HEAD
               {stores.map((store) => {
                 let imageUrl =
                   "https://www.noblesse.com/shop/data/m/editor_new/2024/10/04/4307ea0d8f60886cimage1.jpg";
@@ -254,17 +279,39 @@ export const HomeScreen: React.FC = () => {
                     imageUrl = store.imgUrl;
                   } else {
                     imageUrl = `${API_BASE_URL}${store.imgUrl}`;
+=======
+              {hostSessions.map((session) => {
+                let imageUrl =
+                  "https://www.noblesse.com/shop/data/m/editor_new/2024/10/04/4307ea0d8f60886cimage1.jpg";
+
+                if (session.imgUrl && session.imgUrl.trim() !== "") {
+                  if (session.imgUrl.startsWith("http://")) {
+                    imageUrl = `https://${session.imgUrl.substring(7)}`;
+                  } else if (session.imgUrl.startsWith("https://")) {
+                    imageUrl = session.imgUrl;
+                  } else {
+                    imageUrl = `${API_BASE_URL}${session.imgUrl}`;
+>>>>>>> origin/dev
                   }
                 }
 
                 return (
                   <Card
+<<<<<<< HEAD
                     key={store.id}
                     imageSource={{ uri: imageUrl }}
                     title={store.title}
                     onPress={() =>
                       navigation.navigate("StorDetailScreen", {
                         hostId: store.id,
+=======
+                    key={session.hostId}
+                    imageSource={{ uri: imageUrl }}
+                    title={session.hostName}
+                    onPress={() =>
+                      navigation.navigate("StorDetailScreen", {
+                        hostId: session.hostId,
+>>>>>>> origin/dev
                       })
                     }
                   />
