@@ -12,8 +12,10 @@ export const getStore = async (): Promise<Store[]> => {
 };
 
 export const getStoreDetail = async (id: number): Promise<StoreResponse> => {
-  const response = await axios.get<StoreResponse>(
-    `${BASE_URL}/api/stores/${id}`
-  );
-  return response.data;
+  try {
+    const response = await axios.get<StoreResponse>(`${BASE_URL}/stores/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };

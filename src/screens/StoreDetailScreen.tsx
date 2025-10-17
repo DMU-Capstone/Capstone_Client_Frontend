@@ -17,8 +17,9 @@ import {
   NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/StackNavigator";
-import { getHostDetail, HostDetail, API_BASE_URL } from "../services/hostApi";
-import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
+import { getStoreDetail } from "../apis/store";
+import { StoreResponse } from "../types/store";
+import { API_BASE_URL } from "../services/hostApi";
 
 const { width, height } = Dimensions.get("window");
 
@@ -33,23 +34,15 @@ export const StorDetailScreen: React.FC = () => {
   const route = useRoute<StorDetailScreenRouteProp>();
   const { hostId } = route.params;
 
-  const [hostDetail, setHostDetail] = useState<HostDetail | null>(null);
+  const [hostDetail, setHostDetail] = useState<StoreResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // 지도 초기 위치 (서울 영등포구 기준)
-  const initialRegion = {
-    latitude: 37.5172,
-    longitude: 126.9073,
-    latitudeDelta: 0.01,
-    longitudeDelta: 0.01,
-  };
-
   useEffect(() => {
     const fetchHostDetail = async () => {
       try {
-        const data = await getHostDetail(hostId);
+        const data = await getStoreDetail(hostId);
         setHostDetail(data);
         console.log("Fetched Host Detail:", data);
       } catch (err) {
@@ -114,20 +107,10 @@ export const StorDetailScreen: React.FC = () => {
     );
   }
 
-  const carouselImages = hostDetail.imgUrl
-    ? [hostDetail.imgUrl]
-    : ["https://via.placeholder.com/400x250/4A90E2/FFFFFF?text=No+Image"];
-
-  const keywords = hostDetail.keyword
-    ? hostDetail.keyword.split(", ")
-    : ["편의시설", "주차장", "무선인터넷"];
-
-  // 매장 위치 (API에서 받은 좌표 사용, 없으면 기본값)
-  const storeLocation = {
-    latitude: hostDetail.latitude || 37.5172,
-    longitude: hostDetail.longitude || 126.9073,
-  };
-
+  const carouselImages =
+    hostDetail.images && hostDetail.images.length > 0
+      ? hostDetail.images
+      : ["https://via.placeholder.com/400x250/4A90E2/FFFFFF?text=No+Image"];
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar
@@ -144,11 +127,14 @@ export const StorDetailScreen: React.FC = () => {
         <View style={styles.imageContainer}>
           <Image
             source={{
-              uri: hostDetail.imgUrl
-                ? hostDetail.imgUrl.startsWith("http")
-                  ? hostDetail.imgUrl
-                  : `${API_BASE_URL}${hostDetail.imgUrl}`
-                : "https://via.placeholder.com/400x250/4A90E2/FFFFFF?text=No+Image",
+              uri:
+                carouselImages[currentImageIndex] &&
+                carouselImages[currentImageIndex].startsWith("http")
+                  ? carouselImages[currentImageIndex]
+                  : carouselImages[currentImageIndex] &&
+                    carouselImages[currentImageIndex].startsWith("/")
+                  ? `${API_BASE_URL}${carouselImages[currentImageIndex]}`
+                  : "https://via.placeholder.com/400x250/4A90E2/FFFFFF?text=No+Image",
             }}
             style={styles.headerImage}
             resizeMode="cover"
@@ -180,7 +166,7 @@ export const StorDetailScreen: React.FC = () => {
 
         {/* 매장 정보 카드 */}
         <View style={styles.infoCard}>
-          <Text style={styles.storeName}>{hostDetail.hostName}</Text>
+          <Text style={styles.storeName}>{hostDetail.name}</Text>
 
           <Text style={styles.description} numberOfLines={3}>
             {hostDetail.description}
@@ -192,14 +178,18 @@ export const StorDetailScreen: React.FC = () => {
           {/* 위치 정보 */}
           <View style={styles.infoRow}>
             <Text style={styles.infoIcon}>📍</Text>
-            <Text style={styles.infoText}>영등포역 5번 출구에서 112m</Text>
+            <Text style={styles.infoText}>
+              {hostDetail.location.address} ({hostDetail.location.station}에서{" "}
+              {hostDetail.location.distance})
+            </Text>
           </View>
 
           {/* 운영시간 */}
           <View style={styles.infoRow}>
-            <Text style={styles.infoIcon}></Text>
+            <Text style={styles.infoIcon}>🕒</Text>
             <Text style={styles.infoText}>
-              {hostDetail.startTime} ~ {hostDetail.endTime}
+              {hostDetail.operating_hours.open} ~{" "}
+              {hostDetail.operating_hours.close}
             </Text>
           </View>
 
@@ -217,39 +207,8 @@ export const StorDetailScreen: React.FC = () => {
         {/* 위치 섹션 - 구글 지도 */}
         <View style={styles.locationSection}>
           <Text style={styles.sectionTitle}>위치</Text>
-          <View style={styles.mapContainer}>
-            <MapView
-              provider={PROVIDER_GOOGLE}
-              style={styles.map}
-              initialRegion={{
-                ...initialRegion,
-                latitude: storeLocation.latitude,
-                longitude: storeLocation.longitude,
-              }}
-              showsUserLocation={true}
-              showsMyLocationButton={true}
-            >
-              <Marker
-                coordinate={storeLocation}
-                title={hostDetail.hostName}
-                description={hostDetail.description}
-                pinColor="red"
-              />
-            </MapView>
-          </View>
+          <View style={styles.mapContainer}></View>
           <View style={styles.divider} />
-        </View>
-
-        {/* 대표 키워드 섹션 */}
-        <View style={styles.keywordsSection}>
-          <Text style={styles.sectionTitle}>대표 키워드</Text>
-          <View style={styles.keywordsContainer}>
-            {keywords.map((keyword, index) => (
-              <View key={index} style={styles.keywordButton}>
-                <Text style={styles.keywordText}>{keyword}</Text>
-              </View>
-            ))}
-          </View>
         </View>
 
         {/* 하단 여백 */}
