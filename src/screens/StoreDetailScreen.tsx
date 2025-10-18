@@ -20,6 +20,7 @@ import { RootStackParamList } from "../navigation/StackNavigator";
 import { getStoreDetail } from "../apis/store";
 import { StoreResponse } from "../types/store";
 import { API_BASE_URL } from "../services/hostApi";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 const { width, height } = Dimensions.get("window");
 
@@ -207,8 +208,25 @@ export const StorDetailScreen: React.FC = () => {
         {/* 위치 섹션 - 구글 지도 */}
         <View style={styles.locationSection}>
           <Text style={styles.sectionTitle}>위치</Text>
-          <View style={styles.mapContainer}></View>
-          <View style={styles.divider} />
+          <MapView
+            provider={PROVIDER_GOOGLE}
+            style={styles.mapStyle}
+            initialRegion={{
+              latitude: hostDetail.location.latitude,
+              longitude: hostDetail.location.longitude,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            }}
+          >
+            <Marker
+              coordinate={{
+                latitude: hostDetail.location.latitude,
+                longitude: hostDetail.location.longitude,
+              }}
+              title={hostDetail.name}
+              description={hostDetail.description}
+            />
+          </MapView>
         </View>
 
         {/* 하단 여백 */}
@@ -298,6 +316,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.3)",
     justifyContent: "center",
     alignItems: "center",
+  },
+  mapStyle: {
+    width: "100%",
+    height: 200,
+    borderRadius: 8,
   },
   backButtonText: {
     color: "#fff",

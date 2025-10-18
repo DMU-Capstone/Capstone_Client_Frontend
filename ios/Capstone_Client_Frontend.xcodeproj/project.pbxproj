@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		1CA420024EA808F076CC21F8 /* libPods-Capstone_Client_Frontend.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E9EECCEFBB1205E9DE1FAE79 /* libPods-Capstone_Client_Frontend.a */; };
+		41AF840F2EA36EE1003153CE /* Config.plist in Resources */ = {isa = PBXBuildFile; fileRef = 41AF840E2EA36EE1003153CE /* Config.plist */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8618237E97BD053C33323D56 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
@@ -20,6 +21,7 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Capstone_Client_Frontend/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = Capstone_Client_Frontend/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		2355B5F43794F7538569D1DC /* Pods-Capstone_Client_Frontend.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Capstone_Client_Frontend.release.xcconfig"; path = "Target Support Files/Pods-Capstone_Client_Frontend/Pods-Capstone_Client_Frontend.release.xcconfig"; sourceTree = "<group>"; };
+		41AF840E2EA36EE1003153CE /* Config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Config.plist; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = Capstone_Client_Frontend/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Capstone_Client_Frontend/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E25CC834F80DBCA674A0D0F3 /* Pods-Capstone_Client_Frontend.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Capstone_Client_Frontend.debug.xcconfig"; path = "Target Support Files/Pods-Capstone_Client_Frontend/Pods-Capstone_Client_Frontend.debug.xcconfig"; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				41AF840E2EA36EE1003153CE /* Config.plist */,
 				13B07FAE1A68108700A75B9A /* Capstone_Client_Frontend */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -158,6 +161,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				41AF840F2EA36EE1003153CE /* Config.plist in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				8618237E97BD053C33323D56 /* PrivacyInfo.xcprivacy in Resources */,
@@ -191,9 +195,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Capstone_Client_Frontend/Pods-Capstone_Client_Frontend-resources-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Copy Pods Resources";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Capstone_Client_Frontend/Pods-Capstone_Client_Frontend-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -208,9 +216,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Capstone_Client_Frontend/Pods-Capstone_Client_Frontend-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Capstone_Client_Frontend/Pods-Capstone_Client_Frontend-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
