@@ -237,6 +237,8 @@ $RECYCLE.BIN/
 **/google-services.json
 **/secrets.xml
 **/Config.plist
+ios/Config.plist
+ios/Capstone_Client_Frontend/Config.plist
 **/.env
 **/.env.local
 **/.env.development
