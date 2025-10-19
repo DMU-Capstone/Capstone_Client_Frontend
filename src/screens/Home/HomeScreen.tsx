@@ -177,17 +177,17 @@ export const HomeScreen: React.FC = () => {
               showsHorizontalScrollIndicator={false}
             >
               {stores.map((store) => {
-                let imageUrl =
-                  "https://www.noblesse.com/shop/data/m/editor_new/2024/10/04/4307ea0d8f60886cimage1.jpg";
+                if (!store.imgUrl || store.imgUrl.trim() === "") {
+                  return null;
+                }
 
-                if (store.imgUrl && store.imgUrl.trim() !== "") {
-                  if (store.imgUrl.startsWith("http://")) {
-                    imageUrl = `https://${store.imgUrl.substring(7)}`;
-                  } else if (store.imgUrl.startsWith("https://")) {
-                    imageUrl = store.imgUrl;
-                  } else {
-                    imageUrl = `${API_BASE_URL}${store.imgUrl}`;
-                  }
+                let imageUrl = store.imgUrl;
+                if (store.imgUrl.startsWith("http://")) {
+                  imageUrl = `https://${store.imgUrl.substring(7)}`;
+                } else if (store.imgUrl.startsWith("https://")) {
+                  imageUrl = store.imgUrl;
+                } else {
+                  imageUrl = `${API_BASE_URL}${store.imgUrl}`;
                 }
 
                 return (
@@ -245,17 +245,18 @@ export const HomeScreen: React.FC = () => {
               showsHorizontalScrollIndicator={false}
             >
               {stores.map((store) => {
-                let imageUrl =
-                  "https://www.noblesse.com/shop/data/m/editor_new/2024/10/04/4307ea0d8f60886cimage1.jpg";
+                // API에서 받은 이미지 URL만 사용
+                if (!store.imgUrl || store.imgUrl.trim() === "") {
+                  return null; // 이미지가 없으면 렌더링하지 않음
+                }
 
-                if (store.imgUrl && store.imgUrl.trim() !== "") {
-                  if (store.imgUrl.startsWith("http://")) {
-                    imageUrl = `https://${store.imgUrl.substring(7)}`;
-                  } else if (store.imgUrl.startsWith("https://")) {
-                    imageUrl = store.imgUrl;
-                  } else {
-                    imageUrl = `${API_BASE_URL}${store.imgUrl}`;
-                  }
+                let imageUrl = store.imgUrl;
+                if (store.imgUrl.startsWith("http://")) {
+                  imageUrl = `https://${store.imgUrl.substring(7)}`;
+                } else if (store.imgUrl.startsWith("https://")) {
+                  imageUrl = store.imgUrl;
+                } else {
+                  imageUrl = `${API_BASE_URL}${store.imgUrl}`;
                 }
 
                 return (

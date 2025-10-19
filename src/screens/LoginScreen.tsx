@@ -38,9 +38,12 @@ export const LoginScreen: React.FC = () => {
     try {
       const response = await login({ username, password });
       if (response && response.token) {
+        console.log("로그인 성공:", response);
+        // MainTabs로 이동
         navigation.navigate("MainTabs");
       }
     } catch (error) {
+      console.error("로그인 실패:", error);
       Alert.alert("로그인 실패", "아이디 또는 비밀번호가 올바르지 않습니다.");
     }
   };
