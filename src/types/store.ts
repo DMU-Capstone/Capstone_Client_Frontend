@@ -21,3 +21,10 @@ export type StoreResponse = {
     close: string;
   };
 };
+
+// 대기열 관련 타입
+export type QueueRegistrationRequest = {
+  phoneNumber: string;
+  name: string;
+  count: number;
+};
