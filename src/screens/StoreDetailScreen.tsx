@@ -17,9 +17,9 @@ import {
   NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/StackNavigator";
-import { getStoreDetail } from "../apis/store";
+import { getStoreDetail, registerQueue } from "../apis/store";
 import { StoreResponse } from "../types/store";
-import { API_BASE_URL } from "../services/hostApi";
+import { BASE_URL } from "@env";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 
 const { width, height } = Dimensions.get("window");
@@ -39,6 +39,7 @@ export const StorDetailScreen: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isRegistering, setIsRegistering] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchHostDetail = async () => {
@@ -64,7 +65,46 @@ export const StorDetailScreen: React.FC = () => {
       { text: "취소", style: "cancel" },
       {
         text: "발급받기",
-        onPress: () => navigation.navigate("WaitingNumScreen"),
+        onPress: async () => {
+          try {
+            setIsRegistering(true);
+            await registerQueue(hostId);
+
+            Alert.alert("성공", "대기열에 성공적으로 등록되었습니다!", [
+              {
+                text: "확인",
+                onPress: () => navigation.navigate("WaitingNumScreen"),
+              },
+            ]);
+          } catch (error: any) {
+            console.error("Queue registration error:", error);
+
+            let errorMessage = "대기열 등록 중 오류가 발생했습니다.";
+            if (error.message?.includes("사용자 정보를 찾을 수 없습니다")) {
+              Alert.alert(
+                "오류",
+                "사용자 정보를 찾을 수 없습니다. 다시 로그인해주세요.",
+                [
+                  {
+                    text: "확인",
+                    onPress: () => navigation.navigate("LoginScreen"),
+                  },
+                ]
+              );
+              return;
+            } else if (error?.response?.status === 400) {
+              errorMessage = "잘못된 요청입니다.";
+            } else if (error?.response?.status === 404) {
+              errorMessage = "가게 정보를 찾을 수 없습니다.";
+            } else if (error?.response?.status === 409) {
+              errorMessage = "이미 대기열에 등록되어 있습니다.";
+            }
+
+            Alert.alert("오류", errorMessage);
+          } finally {
+            setIsRegistering(false);
+          }
+        },
       },
     ]);
   };
@@ -134,7 +174,7 @@ export const StorDetailScreen: React.FC = () => {
                   ? carouselImages[currentImageIndex]
                   : carouselImages[currentImageIndex] &&
                     carouselImages[currentImageIndex].startsWith("/")
-                  ? `${API_BASE_URL}${carouselImages[currentImageIndex]}`
+                  ? `${BASE_URL}${carouselImages[currentImageIndex]}`
                   : "https://via.placeholder.com/400x250/4A90E2/FFFFFF?text=No+Image",
             }}
             style={styles.headerImage}
@@ -235,8 +275,17 @@ export const StorDetailScreen: React.FC = () => {
 
       {/* 고정 예약 버튼 */}
       <View style={styles.fixedButtonContainer}>
-        <TouchableOpacity style={styles.reserveButton} onPress={handleReserve}>
-          <Text style={styles.reserveButtonText}>대기번호 발급받기</Text>
+        <TouchableOpacity
+          style={[
+            styles.reserveButton,
+            isRegistering && styles.reserveButtonDisabled,
+          ]}
+          onPress={handleReserve}
+          disabled={isRegistering}
+        >
+          <Text style={styles.reserveButtonText}>
+            {isRegistering ? "등록 중..." : "대기번호 발급받기"}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -450,5 +499,9 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  reserveButtonDisabled: {
+    backgroundColor: "#ccc",
+    opacity: 0.6,
   },
 });
