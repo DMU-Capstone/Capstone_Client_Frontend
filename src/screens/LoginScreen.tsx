@@ -11,7 +11,7 @@ import { StatusBar } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/StackNavigator";
-import { login } from "../apis/auth";
+import { useAuthStore } from "../stores/authStore";
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -22,6 +22,7 @@ export const LoginScreen: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation<LoginScreenNavigationProp>();
+  const { login, isLoading } = useAuthStore();
 
   const KAKAO_AUTH_URL =
     "https://kauth.kakao.com/oauth/authorize" +
@@ -36,12 +37,10 @@ export const LoginScreen: React.FC = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await login({ username, password });
-      if (response && response.token) {
-        console.log("로그인 성공:", response);
-        // MainTabs로 이동
-        navigation.navigate("MainTabs");
-      }
+      await login(username, password);
+      console.log("로그인 성공");
+      // MainTabs로 이동
+      navigation.navigate("MainTabs");
     } catch (error) {
       console.error("로그인 실패:", error);
       Alert.alert("로그인 실패", "아이디 또는 비밀번호가 올바르지 않습니다.");
