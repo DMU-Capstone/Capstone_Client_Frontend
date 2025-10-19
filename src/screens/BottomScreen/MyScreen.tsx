@@ -13,9 +13,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/Ionicons";
-import axios from "axios";
-import { API_BASE_URL } from "../../services/hostApi";
 import { RootStackParamList } from "../../navigation/StackNavigator";
+import { withdrawUser, logout } from "../../apis/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width } = Dimensions.get("window");
@@ -41,7 +40,7 @@ export const MyScreen: React.FC = () => {
   }, []);
 
   const handleWithdrawal = async () => {
-    if (!setName) {
+    if (!name) {
       Alert.alert(
         "오류",
         "사용자 정보를 찾을 수 없습니다. 다시 로그인해주세요."
@@ -61,16 +60,13 @@ export const MyScreen: React.FC = () => {
           text: "탈퇴",
           onPress: async () => {
             try {
-              const response = await axios.delete(
-                `${API_BASE_URL}/quit/${setName}`
-              );
+              const response = await withdrawUser(name);
               if (response.status === 204) {
                 Alert.alert("성공", "회원 탈퇴 되었습니다.", [
                   {
                     text: "확인",
                     onPress: async () => {
-                      await AsyncStorage.removeItem("userId");
-                      await AsyncStorage.removeItem("userToken");
+                      await logout();
                       navigation.reset({
                         index: 0,
                         routes: [{ name: "LoginScreen" }],
@@ -79,24 +75,20 @@ export const MyScreen: React.FC = () => {
                   },
                 ]);
               }
-            } catch (error) {
-              if (axios.isAxiosError(error)) {
-                if (error.response) {
-                  if (error.response.status === 401) {
-                    Alert.alert("오류", "인증에 실패했습니다.");
-                  } else if (error.response.status === 404) {
-                    Alert.alert("오류", "회원 정보를 찾을 수 없습니다.");
-                  } else {
-                    Alert.alert(
-                      "오류",
-                      `회원 탈퇴 중 오류가 발생했습니다: ${error.response.status}`
-                    );
-                  }
+            } catch (error: any) {
+              if (error?.response) {
+                if (error.response.status === 401) {
+                  Alert.alert("오류", "인증에 실패했습니다.");
+                } else if (error.response.status === 404) {
+                  Alert.alert("오류", "회원 정보를 찾을 수 없습니다.");
                 } else {
-                  Alert.alert("오류", "네트워크 오류가 발생했습니다.");
+                  Alert.alert(
+                    "오류",
+                    `회원 탈퇴 중 오류가 발생했습니다: ${error.response.status}`
+                  );
                 }
               } else {
-                Alert.alert("오류", "알 수 없는 오류가 발생했습니다.");
+                Alert.alert("오류", "네트워크 오류가 발생했습니다.");
               }
             }
           },
@@ -115,8 +107,7 @@ export const MyScreen: React.FC = () => {
       {
         text: "로그아웃",
         onPress: async () => {
-          await AsyncStorage.removeItem("userId");
-          await AsyncStorage.removeItem("userToken");
+          await logout();
           navigation.reset({
             index: 0,
             routes: [{ name: "LoginScreen" }],
@@ -163,9 +154,14 @@ export const MyScreen: React.FC = () => {
           <Text style={styles.bio}>
             안녕하세요! 줄서기 앱을 이용하고 있습니다.
           </Text>
-          <TouchableOpacity style={styles.editButton}>
-            <Text style={styles.editButtonText}>프로필 수정</Text>
-          </TouchableOpacity>
+          <View style={styles.editButtonContainer}>
+            <TouchableOpacity style={styles.editButton}>
+              <Text style={styles.editButtonText}>프로필 수정</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.editButton}>
+              <Text style={styles.editButtonText}>쿠폰함</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* 활동 내역 섹션 */}
@@ -251,6 +247,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 20,
+    textAlign: "center",
     fontWeight: "bold",
     color: "#1C1C1E",
   },
@@ -297,14 +294,23 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingHorizontal: 20,
   },
+  editButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10,
+  },
   editButton: {
-    backgroundColor: "#007AFF",
+    width: "40%",
+    alignItems: "center",
+    justifyContent: "center",
+    borderColor: "gray",
+    borderWidth: 1,
     paddingHorizontal: 24,
     paddingVertical: 12,
-    borderRadius: 20,
+    borderRadius: 10,
   },
   editButtonText: {
-    color: "#FFFFFF",
+    color: "gray",
     fontSize: 16,
     fontWeight: "600",
   },

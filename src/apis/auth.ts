@@ -68,3 +68,26 @@ export const login = async (request: LoginRequest) => {
     throw error;
   }
 };
+
+// 회원 탈퇴 API
+export const withdrawUser = async (name: string) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/quit/${name}`);
+    return response;
+  } catch (error) {
+    console.error("Withdrawal error:", error);
+    throw error;
+  }
+};
+
+// 로그아웃 처리 (로컬 스토리지 정리)
+export const logout = async () => {
+  try {
+    await AsyncStorage.removeItem("userToken");
+    await AsyncStorage.removeItem("name");
+    await AsyncStorage.removeItem("phoneNumber");
+  } catch (error) {
+    console.error("Logout error:", error);
+    throw error;
+  }
+};
