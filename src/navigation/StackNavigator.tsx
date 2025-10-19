@@ -38,7 +38,6 @@ const StackNavigator = () => {
           setIsLoggedIn(false);
         }
       } catch (e) {
-        console.error("Failed to load user token from AsyncStorage", e);
         setIsLoggedIn(false);
       } finally {
         setIsLoading(false);
@@ -49,13 +48,13 @@ const StackNavigator = () => {
   }, []);
 
   if (isLoading) {
-    return <SplashScreen />;
+    return <BottomTabNavigator />;
   }
 
   return (
     <Stack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName="SplashScreen"
+      initialRouteName={isLoggedIn ? "MainTabs" : "SplashScreen"}
     >
       <Stack.Screen name="SplashScreen" component={SplashScreen} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />

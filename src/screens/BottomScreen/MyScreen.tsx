@@ -23,13 +23,16 @@ const { width } = Dimensions.get("window");
 export const MyScreen: React.FC = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [userId, setUserId] = React.useState<string | null>(null);
+  const [name, setName] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     const getUserId = async () => {
       try {
-        const storedUserId = await AsyncStorage.getItem("userId");
-        setUserId(storedUserId);
+        const storedName = await AsyncStorage.getItem("name");
+        if (storedName) {
+          console.log("storedName", storedName);
+          setName(storedName);
+        }
       } catch (error) {
         console.error("Failed to load user ID from AsyncStorage", error);
       }
@@ -38,7 +41,7 @@ export const MyScreen: React.FC = () => {
   }, []);
 
   const handleWithdrawal = async () => {
-    if (!userId) {
+    if (!setName) {
       Alert.alert(
         "오류",
         "사용자 정보를 찾을 수 없습니다. 다시 로그인해주세요."
@@ -59,7 +62,7 @@ export const MyScreen: React.FC = () => {
           onPress: async () => {
             try {
               const response = await axios.delete(
-                `${API_BASE_URL}/quit/${userId}`
+                `${API_BASE_URL}/quit/${setName}`
               );
               if (response.status === 204) {
                 Alert.alert("성공", "회원 탈퇴 되었습니다.", [
@@ -156,7 +159,7 @@ export const MyScreen: React.FC = () => {
               <Icon name="camera" size={16} color="#007AFF" />
             </TouchableOpacity>
           </View>
-          <Text style={styles.nickname}>사용자 닉네임</Text>
+          <Text style={styles.nickname}>{name}</Text>
           <Text style={styles.bio}>
             안녕하세요! 줄서기 앱을 이용하고 있습니다.
           </Text>
@@ -284,7 +287,7 @@ const styles = StyleSheet.create({
   nickname: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#1C1C1E",
+    color: "black",
     marginBottom: 8,
   },
   bio: {

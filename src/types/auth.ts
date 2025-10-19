@@ -18,5 +18,6 @@ export type LoginRequest = {
 
 export type LoginResponse = {
   name: string;
-  user_id: string;
+  phoneNumber: string;
+  token: string;
 };

@@ -40,7 +40,7 @@ export const login = async (request: LoginRequest) => {
     );
 
     if (response.status === 200) {
-      const { name, user_id } = response.data;
+      const { name, phoneNumber } = response.data;
       const authToken = response.headers.authorization;
       let token = null;
 
@@ -51,14 +51,15 @@ export const login = async (request: LoginRequest) => {
       // 토큰을 AsyncStorage에 저장
       if (token) {
         await AsyncStorage.setItem("userToken", token);
-        console.log("User token saved:", token);
       }
-      if (user_id) {
-        await AsyncStorage.setItem("userId", user_id);
-        console.log("User ID saved:", user_id);
+      if (phoneNumber) {
+        await AsyncStorage.setItem("phoneNumber", phoneNumber);
+      }
+      if (name) {
+        await AsyncStorage.setItem("name", name);
       }
 
-      return { name, token, userId: user_id };
+      return { name, token, phoneNumber };
     } else {
       throw new Error(`로그인 실패: 응답 코드 ${response.status}`);
     }
