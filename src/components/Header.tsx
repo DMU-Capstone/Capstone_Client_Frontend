@@ -28,13 +28,11 @@ export const Header: React.FC = () => {
 
     // parentNavigation이 존재하는 경우에만 리스너를 추가합니다.
     if (parentNavigation) {
-      console.log("Parent navigation found:", parentNavigation);
       const unsubscribe = parentNavigation.addListener("state", () => {
         // 부모 네비게이터의 현재 상태를 가져옵니다.
         // NavigationState를 사용하여 타입을 명확히 합니다.
         const parentState: NavigationState | undefined =
           parentNavigation.getState();
-        console.log("Parent navigation state changed:", parentState);
 
         if (
           parentState &&

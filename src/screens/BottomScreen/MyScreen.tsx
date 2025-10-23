@@ -14,33 +14,18 @@ import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/Ionicons";
 import { RootStackParamList } from "../../navigation/StackNavigator";
-import { withdrawUser, logout } from "../../apis/auth";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { withdrawUser } from "../../apis/auth";
+import { useAuthStore } from "../../stores/authStore";
 
 const { width } = Dimensions.get("window");
 
 export const MyScreen: React.FC = () => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const [name, setName] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    const getUserId = async () => {
-      try {
-        const storedName = await AsyncStorage.getItem("name");
-        if (storedName) {
-          console.log("storedName", storedName);
-          setName(storedName);
-        }
-      } catch (error) {
-        console.error("Failed to load user ID from AsyncStorage", error);
-      }
-    };
-    getUserId();
-  }, []);
+  const { user, logout } = useAuthStore();
 
   const handleWithdrawal = async () => {
-    if (!name) {
+    if (!user?.name) {
       Alert.alert(
         "오류",
         "사용자 정보를 찾을 수 없습니다. 다시 로그인해주세요."
@@ -60,7 +45,7 @@ export const MyScreen: React.FC = () => {
           text: "탈퇴",
           onPress: async () => {
             try {
-              const response = await withdrawUser(name);
+              const response = await withdrawUser(user.name);
               if (response.status === 204) {
                 Alert.alert("성공", "회원 탈퇴 되었습니다.", [
                   {
@@ -150,7 +135,7 @@ export const MyScreen: React.FC = () => {
               <Icon name="camera" size={16} color="#007AFF" />
             </TouchableOpacity>
           </View>
-          <Text style={styles.nickname}>{name}</Text>
+          <Text style={styles.nickname}>{user?.name || "사용자"}</Text>
           <Text style={styles.bio}>
             안녕하세요! 줄서기 앱을 이용하고 있습니다.
           </Text>

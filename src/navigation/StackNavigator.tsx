@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useAuthStore } from "../stores/authStore";
 
 import SplashScreen from "../screens/SplashScreen";
 import { LoginScreen } from "../screens/LoginScreen";
@@ -23,28 +23,10 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const StackNavigator = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isAuthenticated, isLoading, checkAuth } = useAuthStore();
 
   useEffect(() => {
-    const loadUserToken = async () => {
-      try {
-        const userToken = await AsyncStorage.getItem("userToken");
-        if (userToken) {
-          // 토큰 유효성 검사 (예: API 호출하여 토큰 유효성 확인)
-          // 지금은 토큰이 존재하면 로그인된 것으로 간주
-          setIsLoggedIn(true);
-        } else {
-          setIsLoggedIn(false);
-        }
-      } catch (e) {
-        setIsLoggedIn(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadUserToken();
+    checkAuth();
   }, []);
 
   if (isLoading) {
@@ -54,7 +36,7 @@ const StackNavigator = () => {
   return (
     <Stack.Navigator
       screenOptions={{ headerShown: false }}
-      initialRouteName={isLoggedIn ? "MainTabs" : "SplashScreen"}
+      initialRouteName={isAuthenticated ? "MainTabs" : "SplashScreen"}
     >
       <Stack.Screen name="SplashScreen" component={SplashScreen} />
       <Stack.Screen name="LoginScreen" component={LoginScreen} />
