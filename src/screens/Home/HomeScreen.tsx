@@ -18,13 +18,11 @@ import Swiper from "react-native-swiper";
 import { Header } from "../../components/Header";
 import { Card } from "../../components/Card";
 import { Footer } from "../../components/Footer";
-import {
-  getBannerData,
-  BannerData,
-  API_BASE_URL,
-} from "../../services/hostApi";
+import { getBanner } from "../../apis/banner";
+import { BannerResponse } from "../../types/banner";
 import { getStore } from "../../apis/store";
 import { Store } from "../../types/store";
+import { getImageUrl } from "../../utils/imageUtils";
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -33,7 +31,7 @@ type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export const HomeScreen: React.FC = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const [stores, setStores] = useState<Store[]>([]);
-  const [bannerData, setBannerData] = useState<BannerData | null>(null);
+  const [bannerData, setBannerData] = useState<BannerResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,7 +41,7 @@ export const HomeScreen: React.FC = () => {
         // 각 API를 독립적으로 처리하여 하나가 실패해도 다른 것은 계속 로드
         const [storesResult, bannerDataResult] = await Promise.allSettled([
           getStore(),
-          getBannerData(),
+          getBanner(),
         ]);
 
         // 스토어 데이터 처리
@@ -109,7 +107,7 @@ export const HomeScreen: React.FC = () => {
 
     const fullImageUrl = imageUrl.startsWith("http")
       ? imageUrl
-      : `${API_BASE_URL}${imageUrl}`;
+      : getImageUrl(imageUrl);
 
     return (
       <View key={index} style={styles.slide}>
@@ -187,7 +185,7 @@ export const HomeScreen: React.FC = () => {
                 } else if (store.imgUrl.startsWith("https://")) {
                   imageUrl = store.imgUrl;
                 } else {
-                  imageUrl = `${API_BASE_URL}${store.imgUrl}`;
+                  imageUrl = getImageUrl(store.imgUrl);
                 }
 
                 return (
@@ -256,7 +254,7 @@ export const HomeScreen: React.FC = () => {
                 } else if (store.imgUrl.startsWith("https://")) {
                   imageUrl = store.imgUrl;
                 } else {
-                  imageUrl = `${API_BASE_URL}${store.imgUrl}`;
+                  imageUrl = getImageUrl(store.imgUrl);
                 }
 
                 return (

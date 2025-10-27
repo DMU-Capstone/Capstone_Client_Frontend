@@ -2,12 +2,13 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { HomeScreen } from "../screens/Home/HomeScreen";
-import { MapScreen } from "../screens/MapScreen";
+import { MapScreen } from "../screens/BottomScreen/MapScreen";
 import { StoplistScreen } from "../screens/StoplistScreen";
 import { MyScreen } from "../screens/BottomScreen/MyScreen";
 
 export type TabParamList = {
   Home: undefined;
+  Map: undefined;
   List: undefined;
   Notice: undefined;
   HostRegister: undefined;
